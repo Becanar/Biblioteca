@@ -9,15 +9,15 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.Tooltip?>
 
-<VBox fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodein.controladores.OlimpiadasControler">
+<VBox fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.benat.cano.biblioteca.controller.BibliotecaController">
    <children>
       <MenuBar fx:id="barraMenu" maxWidth="1.7976931348623157E308">
          <menus>
@@ -26,7 +26,7 @@
                   <Menu fx:id="menuIdioma" mnemonicParsing="false" text="%menuIdioma">
                      <items>
                         <MenuItem fx:id="menuEn" mnemonicParsing="false" onAction="#cambiarIngles" text="%menuEn" />
-                        <MenuItem fx:id="menuEs" mnemonicParsing="false" onAction="#cambiarEsp" text="%menuEs"  />
+                        <MenuItem fx:id="menuEs" mnemonicParsing="false" onAction="#cambiarEsp" text="%menuEs" />
                      </items>
                   </Menu>
                </items>
@@ -37,7 +37,7 @@
          <children>
             <ImageView fx:id="imgOlI" fitHeight="44.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../images/ol.png" />
+                  <Image url="@../images/logo.png" />
                </image>
             </ImageView>
             <Label fx:id="lblGestion" text="%lblGestion" textAlignment="CENTER">
@@ -47,7 +47,7 @@
             </Label>
             <ImageView fx:id="imgOlD" fitHeight="44.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../images/ol.png" />
+                  <Image url="@../images/logo.png" />
                </image>
             </ImageView>
          </children>
