@@ -1,4 +1,4 @@
-package com.benat.cano.biblioteca;
+package com.benat.cano.biblioteca.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

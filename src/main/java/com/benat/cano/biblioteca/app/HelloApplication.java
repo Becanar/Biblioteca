@@ -1,4 +1,4 @@
-package com.benat.cano.biblioteca;
+package com.benat.cano.biblioteca.app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

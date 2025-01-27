@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Tooltip?>
+
+<VBox fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodein.controladores.OlimpiadasControler">
+   <children>
+      <MenuBar fx:id="barraMenu" maxWidth="1.7976931348623157E308">
+         <menus>
+            <Menu fx:id="menuAyuda" mnemonicParsing="false" text="%menuAyuda">
+               <items>
+                  <Menu fx:id="menuIdioma" mnemonicParsing="false" text="%menuIdioma">
+                     <items>
+                        <MenuItem fx:id="menuEn" mnemonicParsing="false" onAction="#cambiarIngles" text="%menuEn" />
+                        <MenuItem fx:id="menuEs" mnemonicParsing="false" onAction="#cambiarEsp" text="%menuEs"  />
+                     </items>
+                  </Menu>
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+      <FlowPane fx:id="panelListado" alignment="CENTER" prefHeight="62.0" prefWidth="1000.0">
+         <children>
+            <ImageView fx:id="imgOlI" fitHeight="44.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/ol.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="lblGestion" text="%lblGestion" textAlignment="CENTER">
+               <font>
+                  <Font size="39.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="imgOlD" fitHeight="44.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/ol.png" />
+               </image>
+            </ImageView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="20.0" top="20.0" />
+         </VBox.margin>
+      </FlowPane>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="222.0">
+         <children>
+            <ImageView fx:id="imgOlI1" fitHeight="39.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/lupa.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="txtNombre">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+               <tooltip>
+                  <Tooltip text="%txtNombre.tooltip" />
+               </tooltip>
+            </TextField>
+            <HBox fx:id="panelHueco" prefHeight="100.0" prefWidth="200.0" />
+            <Label fx:id="lblCombo" prefHeight="16.0" prefWidth="153.0" text="%lblCombo" />
+            <ComboBox fx:id="comboBoxDatos" prefWidth="150.0">
+               <tooltip>
+                  <Tooltip text="%comboBoxDatos.tooltip" />
+               </tooltip>
+            </ComboBox>
+            <Button fx:id="btAniadir" mnemonicParsing="false" onAction="#aniadir" text="%btAniadir">
+               <HBox.margin>
+                  <Insets left="100.0" />
+               </HBox.margin>
+               <tooltip>
+                  <Tooltip text="%btAniadir.tooltip" />
+               </tooltip>
+            </Button>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="20.0" />
+         </VBox.margin>
+      </HBox>
+      <TableView fx:id="tablaVista" visible="true">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <tooltip>
+            <Tooltip text="%tablaVista.tooltip" />
+         </tooltip>
+      </TableView>
+   </children>
+</VBox>
