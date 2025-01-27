@@ -215,6 +215,8 @@ public class BibliotecaController {
         tablaVista.setItems(lstEntera); // Establecer la lista como los datos de la tabla
 
         // Crear las columnas de la tabla
+        TableColumn<Alumno, String> dniColumna = new TableColumn<>(resources.getString("dni"));
+        dniColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDni()));
         TableColumn<Alumno, String> nombreColumna = new TableColumn<>(resources.getString("name"));
         nombreColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre()));
 
@@ -226,7 +228,7 @@ public class BibliotecaController {
 
         // Agregar las columnas a la tabla
         tablaVista.getColumns().clear(); // Limpiar las columnas actuales de la tabla
-        tablaVista.getColumns().addAll(nombreColumna, apellido1Columna, apellido2Columna);
+        tablaVista.getColumns().addAll(dniColumna,nombreColumna, apellido1Columna, apellido2Columna);
     }
 
 
