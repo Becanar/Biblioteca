@@ -803,4 +803,12 @@ public class BibliotecaController {
         alerta.showAndWait();
     }
 
+    public void generarReporte1(ActionEvent actionEvent) {
+    }
+
+    public void generarReporte2(ActionEvent actionEvent) {
+    }
+
+    public void generarReporte3(ActionEvent actionEvent) {
+    }
 }

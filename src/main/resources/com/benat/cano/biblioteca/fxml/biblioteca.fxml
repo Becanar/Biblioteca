@@ -23,6 +23,13 @@
          <menus>
             <Menu fx:id="menuAyuda" mnemonicParsing="false" text="%menuAyuda">
                <items>
+                  <Menu fx:id="reportesJasper" mnemonicParsing="false" text="%menuReport">
+                     <items>
+                        <MenuItem fx:id="report1" mnemonicParsing="false" onAction="#generarReporte1" text="%report1" />
+                        <MenuItem fx:id="report2" mnemonicParsing="false" onAction="#generarReporte2" text="%report2" />
+                        <MenuItem fx:id="report3" mnemonicParsing="false" onAction="#generarReporte3" text="%report3" />
+                     </items>
+                  </Menu>
                   <Menu fx:id="menuIdioma" mnemonicParsing="false" text="%menuIdioma">
                      <items>
                         <MenuItem fx:id="menuEn" mnemonicParsing="false" onAction="#cambiarIngles" text="%menuEn" />
