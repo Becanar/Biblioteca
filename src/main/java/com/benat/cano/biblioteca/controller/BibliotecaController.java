@@ -1,10 +1,13 @@
 package com.benat.cano.biblioteca.controller;
 
 import com.benat.cano.biblioteca.app.App;
+import com.benat.cano.biblioteca.dao.DaoAlumno;
 import com.benat.cano.biblioteca.model.Alumno;
 import com.benat.cano.biblioteca.model.Libro;
 import com.benat.cano.biblioteca.model.Prestamo;
 import com.benat.cano.biblioteca.model.Propiedades;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -201,7 +204,31 @@ public class BibliotecaController {
     }
 
     private void cargarAlumnos() {
+        // Obtener la lista de alumnos desde el DAO
+        ObservableList<Alumno> alumnos = DaoAlumno.cargarListado();
+
+        // Limpiar la lista antes de agregar los nuevos datos
+        lstEntera.clear();
+
+        // Añadir los alumnos a la lista observable
+        lstEntera.addAll(alumnos);
+        tablaVista.setItems(lstEntera); // Establecer la lista como los datos de la tabla
+
+        // Crear las columnas de la tabla
+        TableColumn<Alumno, String> nombreColumna = new TableColumn<>(resources.getString("name"));
+        nombreColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre()));
+
+        TableColumn<Alumno, String> apellido1Columna = new TableColumn<>(resources.getString("surname1"));
+        apellido1Columna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getApellido1()));
+
+        TableColumn<Alumno, String> apellido2Columna = new TableColumn<>(resources.getString("surname2"));
+        apellido2Columna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getApellido2()));
+
+        // Agregar las columnas a la tabla
+        tablaVista.getColumns().clear(); // Limpiar las columnas actuales de la tabla
+        tablaVista.getColumns().addAll(nombreColumna, apellido1Columna, apellido2Columna);
     }
+
 
     /**
      * Permite editar el elemento seleccionado en la tabla. Abre una ventana modal para editar
