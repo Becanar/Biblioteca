@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `libros`.`Libro` (
 	`editorial` VARCHAR(150) NULL DEFAULT NULL,
 	`estado` VARCHAR(50) NULL DEFAULT NULL,
 	`baja` INT NULL DEFAULT '0',
+	`portada` longblob NULL,
 	PRIMARY KEY (`codigo`)
 )ENGINE = InnoDB DEFAULT CHARACTER SET = latin1 COLLATE = latin1_spanish_ci;
 
