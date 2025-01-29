@@ -316,8 +316,8 @@ public class BibliotecaController {
                     Window ventana = tablaVista.getScene().getWindow();
                     String idioma = Propiedades.getValor("language");
                     ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/olimpiadasV.fxml"), bundle);
-                    OlimpiadasVController controlador = new OlimpiadasVController(olimpiada);  // Pasamos la Olimpiada seleccionada
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/alumnos.fxml"), bundle);
+                    AlumnosController controlador = new AlumnosController(olimpiada);  // Pasamos la Olimpiada seleccionada
                     fxmlLoader.setController(controlador);
                     Scene scene = new Scene(fxmlLoader.load());
                     Stage stage = new Stage();
@@ -589,38 +589,38 @@ public class BibliotecaController {
     }
     @FXML
     void aniadir(ActionEvent event) {
-        /*String seleccion = comboBoxDatos.getSelectionModel().getSelectedItem();
+        String seleccion = comboBoxDatos.getSelectionModel().getSelectedItem();
         System.out.println(seleccion);
-        if (seleccion.equals(resources.getString("olympics"))) {
+        if (seleccion.equals(resources.getString("students"))) {
 
             try {
                 Window ventana = tablaVista.getScene().getWindow();
                 String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/olimpiadasV.fxml"), bundle);
-                OlimpiadasVController controlador = new OlimpiadasVController();
+                ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/alumnos.fxml"), bundle);
+                AlumnosController controlador = new AlumnosController();
                 fxmlLoader.setController(controlador);
                 Scene scene = new Scene(fxmlLoader.load());
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 stage.setResizable(false);
                 try {
-                    Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
+                    Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
                     stage.getIcons().add(img);
                 } catch (Exception e) {
                     System.out.println("error.img " + e.getMessage());
                 }
-                scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                stage.setTitle(resources.getString("olympics"));
+                scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
+                stage.setTitle(resources.getString("students"));
                 stage.initOwner(ventana);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.showAndWait();
-                cargarOlimpiadas();
+                cargarAlumnos();
             } catch (IOException e) {
                 System.err.println(e.getMessage());
                 alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
             }
-        } else if (seleccion.equals(resources.getString("athletes"))) {
+        } /*else if (seleccion.equals(resources.getString("athletes"))) {
             try {
                 Window ventana = tablaVista.getScene().getWindow();
                 String idioma = Propiedades.getValor("language");
