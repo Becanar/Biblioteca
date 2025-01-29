@@ -98,6 +98,7 @@ public class BibliotecaController {
     @FXML
     private ResourceBundle resources;
 
+
     private ObservableList<Object> lstEntera = FXCollections.observableArrayList();
     private ObservableList<Object> lstFiltrada = FXCollections.observableArrayList();
 
@@ -467,7 +468,6 @@ public class BibliotecaController {
                     System.err.println(e.getMessage());
                     alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
                 }
-
             }
         } else {
             alerta(new ArrayList<>(Arrays.asList(resources.getString("select.ed"))));
@@ -495,6 +495,17 @@ public class BibliotecaController {
                     alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.olympic"))));
                 }
 
+            }else{
+                if (item.equals(resources.getString("books"))) {
+                    Libro olimpiada = (Libro) seleccion;
+                    if (DaoLibro.esEliminable(olimpiada)) {
+                        mostrarConfirmacionYEliminar(resources.getString("books"), resources.getString("confirm.delete.olympics"),
+                                () -> DaoLibro.eliminar(olimpiada), this::cargarLibros);
+                    } else {
+                        alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.olympic"))));
+                    }
+
+                }
             }
         } else {
             alerta(new ArrayList<>(Arrays.asList(resources.getString("select"))));
