@@ -7,7 +7,6 @@ import com.benat.cano.biblioteca.dao.DaoLibro;
 import com.benat.cano.biblioteca.dao.DaoPrestamo;
 import com.benat.cano.biblioteca.model.*;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -433,7 +432,46 @@ public class BibliotecaController {
      */
 
     private void editar(Object o) {
+        Object seleccion = tablaVista.getSelectionModel().getSelectedItem();
 
+        if (seleccion != null) {
+            String item = comboBoxDatos.getSelectionModel().getSelectedItem();
+
+            if (item.equals(resources.getString("students"))) {
+                // Olimpiada
+                Alumno alumno = (Alumno) seleccion;
+                try {
+                    Window ventana = tablaVista.getScene().getWindow();
+                    String idioma = Propiedades.getValor("language");
+                    ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/alumnos.fxml"), bundle);
+                    AlumnosController controlador = new AlumnosController(alumno);  // Pasamos la Participación seleccionada
+                    fxmlLoader.setController(controlador);
+                    Scene scene = new Scene(fxmlLoader.load());
+                    Stage stage = new Stage();
+                    stage.setScene(scene);
+                    stage.setResizable(false);
+                    try {
+                        Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
+                        stage.getIcons().add(img);
+                    } catch (Exception e) {
+                        System.out.println("error.img " + e.getMessage());
+                    }
+                    scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
+                    stage.setTitle(resources.getString("students"));
+                    stage.initOwner(ventana);
+                    stage.initModality(Modality.APPLICATION_MODAL);
+                    stage.showAndWait();
+                    cargarAlumnos();
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
+                }
+
+            }
+        } else {
+            alerta(new ArrayList<>(Arrays.asList(resources.getString("select.ed"))));
+        }
     }
 
     /**
@@ -486,6 +524,8 @@ public class BibliotecaController {
                 String idioma = Propiedades.getValor("language");
                 ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/alumnos.fxml"), bundle);
+                AlumnosController controlador = new AlumnosController();  // Pasamos la Participación seleccionada
+                fxmlLoader.setController(controlador);
                 Scene scene = new Scene(fxmlLoader.load());
                 Stage stage = new Stage();
                 stage.setScene(scene);

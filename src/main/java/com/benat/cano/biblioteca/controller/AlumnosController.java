@@ -53,7 +53,7 @@ public class AlumnosController implements Initializable {
      * Inicializa la vista. Si el alumno es nulo, se prepara la vista para crear un nuevo alumno.
      * Si no, carga los datos del alumno para su edición.
      *
-     * @param url La URL de la vista.
+     * @param url            La URL de la vista.
      * @param resourceBundle El recurso de internacionalización.
      */
     @Override
@@ -115,6 +115,8 @@ public class AlumnosController implements Initializable {
         if (result.get() == ButtonType.OK) {
             if (DaoAlumno.eliminar(alumno)) {
                 confirmacion(resources.getString("delete.student.success"));
+                Stage stage = (Stage) txtNombre.getScene().getWindow();
+                stage.close();
             } else {
                 ArrayList<String> errores = new ArrayList<>();
                 errores.add(resources.getString("delete.student.fail"));
@@ -143,18 +145,18 @@ public class AlumnosController implements Initializable {
         // Si hay errores, mostrar alerta
         if (!errores.isEmpty()) {
             alerta(errores);
-        }else {
+        } else {
             Alumno nuevo = new Alumno();
             nuevo.setNombre(txtNombre.getText());
             nuevo.setDni(txtID.getText());  // El DNI no se debe modificar
-
+            nuevo.setApellido1((txtS1.getText()));
+            nuevo.setApellido2(txtS2.getText());
             // Comprobamos si el alumno ya existe
-            if(DaoAlumno.getAlumno(nuevo.getDni()) == null){
-                nuevo.setApellido1((txtS1.getText()));
-                nuevo.setApellido2(txtS2.getText());
+            if (this.alumno == null) {
+                if (DaoAlumno.getAlumno(nuevo.getDni()) == null) {
 
-                // Crear o modificar el alumno
-                if (this.alumno == null) {
+                    // Crear o modificar el alumno
+
                     boolean id = DaoAlumno.insertar(nuevo);
                     if (!id) {
                         errores.add(resources.getString("save.fail"));
@@ -163,19 +165,22 @@ public class AlumnosController implements Initializable {
                         Stage stage = (Stage) txtNombre.getScene().getWindow();
                         stage.close();
                     }
+
                 } else {
-                    if (DaoAlumno.modificar(this.alumno)) {
-                        confirmacion(resources.getString("update.student"));
-                        Stage stage = (Stage) txtNombre.getScene().getWindow();
-                        stage.close();
-                    } else {
-                        errores.add(resources.getString("save.fail"));
-                    }
+                    // Si ya existe, mostramos el mensaje de duplicado
+                    errores.add(resources.getString("duplicate.student"));
                 }
             } else {
-                // Si ya existe, mostramos el mensaje de duplicado
-                errores.add(resources.getString("duplicate.student"));
+
+                if (DaoAlumno.modificar(nuevo)) {
+                    confirmacion(resources.getString("update.student"));
+                    Stage stage = (Stage) txtNombre.getScene().getWindow();
+                    stage.close();
+                } else {
+                    errores.add(resources.getString("save.fail"));
+                }
             }
+
 
             // Si hay errores de duplicado o de inserción, mostramos la alerta
             if (!errores.isEmpty()) {

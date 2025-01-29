@@ -117,6 +117,8 @@ public class DaoAlumno {
             ps.setString(3, alumno.getApellido2());
             ps.setString(4, alumno.getDni());
             int filasAfectadas = ps.executeUpdate();
+            System.out.println("Filas afectadas: " + filasAfectadas);
+
             ps.close();
             connection.closeConexion();
             return filasAfectadas > 0;
