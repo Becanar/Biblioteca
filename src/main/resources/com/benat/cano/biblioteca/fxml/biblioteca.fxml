@@ -90,6 +90,11 @@
                   <Insets left="5.0" />
                </HBox.margin>
             </RadioButton>
+            <RadioButton fx:id="radioOtro" text="Nombre" selected="true" >
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </RadioButton>
 
             <HBox fx:id="panelHueco" prefHeight="100.0" prefWidth="50.0" />
             <Label fx:id="lblCombo" prefHeight="16.0" prefWidth="153.0" text="%lblCombo" />

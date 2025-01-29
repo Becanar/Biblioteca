@@ -95,6 +95,9 @@ public class BibliotecaController {
     private RadioButton radioCodigo;
 
     @FXML
+    private RadioButton radioOtro;
+
+    @FXML
     private TextField txtNombre;
 
     @FXML
@@ -137,8 +140,10 @@ public class BibliotecaController {
         ToggleGroup grupoBusqueda = new ToggleGroup();
         radioNombre.setToggleGroup(grupoBusqueda);
         radioCodigo.setToggleGroup(grupoBusqueda);
+        radioOtro.setToggleGroup(grupoBusqueda);
         radioNombre.setSelected(true);
     }
+
     /**
      * Filtra las entidades mostradas en la tabla según el texto ingresado en el campo de búsqueda.
      * El filtro es sensible al texto y buscará coincidencias en los nombres de las entidades.
@@ -154,33 +159,39 @@ public class BibliotecaController {
         valor = valor.toLowerCase();
         lstFiltrada.clear(); // Limpiamos la lista filtrada
 
-        boolean buscarPorNombre = radioNombre.isSelected(); // Verifica qué radio button está seleccionado
+        boolean buscarPorNombre = radioNombre.isSelected();
+        boolean buscarPorCodigo = radioCodigo.isSelected();// Verifica qué radio button está seleccionado
 
         // Iteramos por todos los elementos de lstEntera
         for (Object item : lstEntera) {
             String criterioBusqueda = "";
-
-            // Verifica el tipo del objeto en la lista
-            System.out.println("Procesando objeto de clase: " + item.getClass().getName());
-
-            if (buscarPorNombre) { // Si buscamos por nombre/título
+            if (buscarPorNombre) {
                 if (item instanceof Alumno) {
-                    System.out.println("Es un Alumno");
                     criterioBusqueda = ((Alumno) item).getNombre();
                 } else if (item instanceof Libro) {
-                    System.out.println("Es un Libro");
                     criterioBusqueda = ((Libro) item).getTitulo();
+                }else if (item instanceof Prestamo) {
+                    criterioBusqueda = ((Prestamo) item).getAlumno().getDni();
                 }
-            } else { // Si buscamos por código/dni
+            } else if(buscarPorCodigo){
                 if (item instanceof Alumno) {
-                    System.out.println("Es un Alumno");
                     criterioBusqueda = ((Alumno) item).getDni();
                 } else if (item instanceof Libro) {
-                    System.out.println("Es un Libro");
                     criterioBusqueda = String.valueOf(((Libro) item).getCodigo());
                 }
+                else if (item instanceof Prestamo) {
+                    criterioBusqueda = String.valueOf(((Prestamo) item).getLibro().getCodigo());
+                }
+            }else{
+                if (item instanceof Alumno) {
+                    criterioBusqueda = ((Alumno) item).getApellido1();
+                } else if (item instanceof Libro) {
+                    criterioBusqueda =((Libro) item).getAutor();
+                }
+                else if (item instanceof Prestamo) {
+                    criterioBusqueda = String.valueOf(((Prestamo) item).getFecha_prestamo());
+                }
             }
-
             // Convertimos a minúsculas para hacer la búsqueda insensible al caso
             if (criterioBusqueda != null && criterioBusqueda.toLowerCase().contains(valor)) {
                 lstFiltrada.add(item);  // Añadimos el item a la lista filtrada si coincide
@@ -190,7 +201,6 @@ public class BibliotecaController {
         // Actualizamos la vista con los elementos filtrados
         tablaVista.setItems(lstFiltrada);
     }
-
 
 
     /**
@@ -208,9 +218,8 @@ public class BibliotecaController {
         // Obtener el valor de la clave "participations" desde el archivo de recursos
         String alumnos = resources.getString("students");
         String libros = resources.getString("books");
-        String prestamos = resources.getString("teams");
+        String prestamos = resources.getString("borrows");
         //String historico = resources.getString("historico");
-
 
 
         // Obtener el valor seleccionado del ComboBox
@@ -223,9 +232,18 @@ public class BibliotecaController {
         // Usar if-else para comparar las opciones seleccionadas
         if (alumnos.equals(seleccion)) {
             cargarAlumnos();
+            radioNombre.setText("Nombre");
+            radioCodigo.setText("DNI");
+            radioOtro.setText("Apellido1");
         } else if (libros.equals(seleccion)) {
             cargarLibros();
+            radioNombre.setText("Titulo");
+            radioCodigo.setText("Código");
+            radioOtro.setText("Autor");
         } else if (prestamos.equals(seleccion)) {
+            radioNombre.setText("DNI Alumno");
+            radioCodigo.setText("Código libro");
+            radioOtro.setText("Fecha");
             cargarPrestamos();
         } /*else if (historico.equals(seleccion)) {
             cargarHistorico();
@@ -236,31 +254,45 @@ public class BibliotecaController {
     }
 
     private void cargarPrestamos() {
-        if (tablaVista.getColumns().isEmpty()) {
-            // Columna de ID del préstamo
-            TableColumn<Prestamo, Integer> colId = new TableColumn<>("ID Préstamo");
-            colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId_prestamo()).asObject());
-
-            // Columna de Alumno
-            TableColumn<Prestamo, String> colAlumno = new TableColumn<>("Alumno");
-            colAlumno.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAlumno().getNombre()));
-
-            // Columna de Libro
-            TableColumn<Prestamo, String> colLibro = new TableColumn<>("Libro");
-            colLibro.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLibro().getTitulo()));
-
-            // Columna de Fecha de Préstamo
-            TableColumn<Prestamo, String> colFecha = new TableColumn<>("Fecha de Préstamo");
-            colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_prestamo().toString()));
-
-            // Añadir las columnas a la tabla
-            tablaVista.getColumns().addAll(colId, colAlumno, colLibro, colFecha);
-        }
-
-        // Cargar los préstamos en la tabla
+        // Obtener la lista de préstamos desde el DAO
         ObservableList<Prestamo> prestamos = DaoPrestamo.cargarListado();
-        tablaVista.setItems(prestamos);
+
+        // Limpiar la lista antes de agregar los nuevos datos
+        lstEntera.clear();
+
+        // Añadir los préstamos a la lista observable
+        lstEntera.addAll(prestamos);
+        tablaVista.setItems(lstEntera); // Establecer la lista como los datos de la tabla
+
+        // Limpiar las columnas existentes y crear nuevas
+
+
+        // Columna de ID del préstamo
+        TableColumn<Prestamo, Integer> colId = new TableColumn<>("ID Préstamo");
+        colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId_prestamo()).asObject());
+
+        // Columna de Alumno
+        TableColumn<Prestamo, String> colAlumno = new TableColumn<>("DNI Alumno");
+        colAlumno.setCellValueFactory(cellData -> {
+            Alumno alumno = cellData.getValue().getAlumno();
+            return alumno != null ? new SimpleStringProperty(alumno.getDni()) : new SimpleStringProperty("");
+        });
+
+        // Columna de Libro
+        TableColumn<Prestamo, Integer> colLibro = new TableColumn<>("Código Libro");
+        colLibro.setCellValueFactory(cellData -> {
+            Libro libro = cellData.getValue().getLibro();
+            return libro != null ? new SimpleIntegerProperty(libro.getCodigo()).asObject() : new SimpleIntegerProperty(0).asObject();
+        });
+
+        // Columna de Fecha de Préstamo
+        TableColumn<Prestamo, String> colFecha = new TableColumn<>("Fecha de Préstamo");
+        colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_prestamo().toString()));
+
+        tablaVista.getColumns().clear();
+        tablaVista.getColumns().addAll(colId, colAlumno, colLibro, colFecha);
     }
+
 
 
     private void cargarLibros() {
@@ -346,7 +378,7 @@ public class BibliotecaController {
 
         // Agregar las columnas a la tabla
         tablaVista.getColumns().clear(); // Limpiar las columnas actuales de la tabla
-        tablaVista.getColumns().addAll(dniColumna,nombreColumna, apellido1Columna, apellido2Columna);
+        tablaVista.getColumns().addAll(dniColumna, nombreColumna, apellido1Columna, apellido2Columna);
     }
 
 
@@ -360,6 +392,7 @@ public class BibliotecaController {
     private void editar(Object o) {
 
     }
+
     /**
      * Elimina un elemento de la tabla según la selección del usuario.
      * Muestra un mensaje de confirmación antes de realizar la eliminación de la entidad.
@@ -367,7 +400,9 @@ public class BibliotecaController {
      *
      * @param o El objeto a eliminar, dependiendo de la selección de la tabla.
      */
-    private void borrar(Object o) { }
+    private void borrar(Object o) {
+    }
+
     /**
      * Carga los datos en el ComboBox de selección de tipo de elementos, con las opciones disponibles
      * como "Olimpiadas", "Deportistas", "Equipos", "Eventos", "Deportes" y "Participaciones".
@@ -379,9 +414,10 @@ public class BibliotecaController {
         );
         comboBoxDatos.setItems(opciones);
     }
+
     @FXML
     void aniadir(ActionEvent event) {
-        }
+    }
 
     /**
      * Cambia el idioma de la aplicación a inglés.
@@ -392,6 +428,7 @@ public class BibliotecaController {
     public void cambiarIngles(ActionEvent actionEvent) {
         cambiarIdioma("en");
     }
+
     /**
      * Cambia el idioma de la aplicación a español.
      * Este método se ejecuta cuando se selecciona la opción de cambiar a español.
@@ -409,7 +446,45 @@ public class BibliotecaController {
      */
 
     public void cambiarIdioma(String idioma) {
-        
+        // Actualizar el archivo db.properties con el nuevo idioma
+        Propiedades.setIdioma("language", idioma);
+
+        // Cargar el nuevo ResourceBundle con el idioma seleccionado
+        ResourceBundle bundle = ResourceBundle.getBundle("com.benat.cano.biblioteca.languages.lan", new Locale(idioma));
+
+        // Obtener la ventana actual (en este caso el Stage principal)
+        Stage stage = (Stage) btAniadir.getScene().getWindow();
+
+        // Actualizar la ventana principal
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/benat/cano/biblioteca/fxml/biblioteca.fxml"), bundle);
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setTitle(bundle.getString("app.name"));
+            stage.setResizable(false);
+
+            try {
+                Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
+                stage.getIcons().add(img);
+            } catch (Exception e) {
+                System.out.println(bundle.getString("error.img") + e.getMessage());
+            }
+
+            scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
+            stage.setTitle(bundle.getString("app.name"));
+            stage.setScene(scene);
+            stage.show();
+
+            // Cierra todas las ventanas auxiliares y vuelve a abrirlas con el idioma actualizado (si es necesario)
+            // Ejemplo:
+            if (stage.getOwner() != null) {
+                Stage owner = (Stage)stage.getOwner();
+                // Aquí puedes usar un código para reiniciar o actualizar otras ventanas hijas
+                // owner.close();  // O también puedes recargar otras ventanas
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -430,6 +505,7 @@ public class BibliotecaController {
         alert.setContentText(contenido.toString().trim());
         alert.showAndWait();
     }
+
     /**
      * Muestra una alerta de confirmación con el mensaje proporcionado.
      *
