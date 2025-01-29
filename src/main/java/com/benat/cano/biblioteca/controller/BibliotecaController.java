@@ -2,12 +2,10 @@ package com.benat.cano.biblioteca.controller;
 
 import com.benat.cano.biblioteca.app.App;
 import com.benat.cano.biblioteca.dao.DaoAlumno;
+import com.benat.cano.biblioteca.dao.DaoHistoricoPrestamo;
 import com.benat.cano.biblioteca.dao.DaoLibro;
 import com.benat.cano.biblioteca.dao.DaoPrestamo;
-import com.benat.cano.biblioteca.model.Alumno;
-import com.benat.cano.biblioteca.model.Libro;
-import com.benat.cano.biblioteca.model.Prestamo;
-import com.benat.cano.biblioteca.model.Propiedades;
+import com.benat.cano.biblioteca.model.*;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -172,6 +170,8 @@ public class BibliotecaController {
                     criterioBusqueda = ((Libro) item).getTitulo();
                 }else if (item instanceof Prestamo) {
                     criterioBusqueda = ((Prestamo) item).getAlumno().getDni();
+                }else{
+                    criterioBusqueda = ((HistoricoPrestamos) item).getAlumno().getDni();
                 }
             } else if(buscarPorCodigo){
                 if (item instanceof Alumno) {
@@ -181,6 +181,8 @@ public class BibliotecaController {
                 }
                 else if (item instanceof Prestamo) {
                     criterioBusqueda = String.valueOf(((Prestamo) item).getLibro().getCodigo());
+                }else{
+                    criterioBusqueda = String.valueOf(((HistoricoPrestamos) item).getLibro().getCodigo());
                 }
             }else{
                 if (item instanceof Alumno) {
@@ -190,6 +192,8 @@ public class BibliotecaController {
                 }
                 else if (item instanceof Prestamo) {
                     criterioBusqueda = String.valueOf(((Prestamo) item).getFecha_prestamo());
+                }else{
+                    criterioBusqueda = String.valueOf(((HistoricoPrestamos) item).getFecha_devolucion());
                 }
             }
             // Convertimos a minúsculas para hacer la búsqueda insensible al caso
@@ -219,7 +223,7 @@ public class BibliotecaController {
         String alumnos = resources.getString("students");
         String libros = resources.getString("books");
         String prestamos = resources.getString("borrows");
-        //String historico = resources.getString("historico");
+        String historicos = resources.getString("historico");
 
 
         // Obtener el valor seleccionado del ComboBox
@@ -245,12 +249,53 @@ public class BibliotecaController {
             radioCodigo.setText("Código libro");
             radioOtro.setText("Fecha");
             cargarPrestamos();
-        } /*else if (historico.equals(seleccion)) {
+        } else if (historicos.equals(seleccion)) {
+            radioNombre.setText("DNI Alumno");
+            radioCodigo.setText("Código libro");
+            radioOtro.setText("Fecha Devolucion");
             cargarHistorico();
-        }*/
+        }
     }
 
     private void cargarHistorico() {
+        ObservableList<HistoricoPrestamos> prestamos = DaoHistoricoPrestamo.cargarListado();
+
+        // Limpiar la lista antes de agregar los nuevos datos
+        lstEntera.clear();
+
+        // Añadir los préstamos a la lista observable
+        lstEntera.addAll(prestamos);
+        tablaVista.setItems(lstEntera); // Establecer la lista como los datos de la tabla
+
+        // Limpiar las columnas existentes y crear nuevas
+
+
+        // Columna de ID del préstamo
+        TableColumn<HistoricoPrestamos, Integer> colId = new TableColumn<>("ID Préstamo");
+        colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId_prestamo()).asObject());
+
+        // Columna de Alumno
+        TableColumn<HistoricoPrestamos, String> colAlumno = new TableColumn<>("DNI Alumno");
+        colAlumno.setCellValueFactory(cellData -> {
+            Alumno alumno = cellData.getValue().getAlumno();
+            return alumno != null ? new SimpleStringProperty(alumno.getDni()) : new SimpleStringProperty("");
+        });
+
+        // Columna de Libro
+        TableColumn<HistoricoPrestamos, Integer> colLibro = new TableColumn<>("Código Libro");
+        colLibro.setCellValueFactory(cellData -> {
+            Libro libro = cellData.getValue().getLibro();
+            return libro != null ? new SimpleIntegerProperty(libro.getCodigo()).asObject() : new SimpleIntegerProperty(0).asObject();
+        });
+
+        // Columna de Fecha de Préstamo
+        TableColumn<HistoricoPrestamos, String> colFecha = new TableColumn<>("Fecha de Préstamo");
+        colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_prestamo().toString()));
+        TableColumn<HistoricoPrestamos, String> colFecha2 = new TableColumn<>("Fecha de Devolución");
+        colFecha2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_devolucion().toString()));
+
+        tablaVista.getColumns().clear();
+        tablaVista.getColumns().addAll(colId, colAlumno, colLibro, colFecha,colFecha2);
     }
 
     private void cargarPrestamos() {
@@ -410,7 +455,7 @@ public class BibliotecaController {
 
     private void cargarDatosComboBox() {
         ObservableList<String> opciones = FXCollections.observableArrayList(
-                resources.getString("students"), resources.getString("borrows"), resources.getString("books")
+                resources.getString("students"), resources.getString("borrows"), resources.getString("books"),resources.getString("historico")
         );
         comboBoxDatos.setItems(opciones);
     }

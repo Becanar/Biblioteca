@@ -3,7 +3,7 @@ package com.benat.cano.biblioteca.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class HistorialPrestamos {
+public class HistoricoPrestamos {
 
         private int id_prestamo;
         private Alumno alumno;
@@ -11,7 +11,7 @@ public class HistorialPrestamos {
         private LocalDateTime fecha_prestamo;
         private LocalDateTime fecha_devolucion;
 
-        public HistorialPrestamos(int id_prestamo, Alumno alumno, Libro libro, LocalDateTime fecha_prestamo, LocalDateTime fecha_devolucion) {
+        public HistoricoPrestamos(int id_prestamo, Alumno alumno, Libro libro, LocalDateTime fecha_prestamo, LocalDateTime fecha_devolucion) {
             this.id_prestamo = id_prestamo;
             this.alumno = alumno;
             this.libro = libro;
@@ -19,7 +19,7 @@ public class HistorialPrestamos {
             this.fecha_devolucion = fecha_devolucion;
         }
 
-        public HistorialPrestamos() {}
+        public HistoricoPrestamos() {}
 
         public int getId_prestamo() {
             return id_prestamo;
@@ -64,7 +64,7 @@ public class HistorialPrestamos {
         @Override
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
-            HistorialPrestamos p = (HistorialPrestamos) o;
+            HistoricoPrestamos p = (HistoricoPrestamos) o;
             return id_prestamo == p.id_prestamo;
         }
 

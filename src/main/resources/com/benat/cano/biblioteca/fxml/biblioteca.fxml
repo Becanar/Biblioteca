@@ -105,7 +105,7 @@
             </ComboBox>
             <Button fx:id="btAniadir" mnemonicParsing="false" onAction="#aniadir" text="%btAniadir">
                <HBox.margin>
-                  <Insets left="100.0" />
+                  <Insets left="50.0" />
                </HBox.margin>
                <tooltip>
                   <Tooltip text="%btAniadir.tooltip" />

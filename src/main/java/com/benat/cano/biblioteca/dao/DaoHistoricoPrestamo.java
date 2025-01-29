@@ -3,7 +3,7 @@ package com.benat.cano.biblioteca.dao;
 
 import com.benat.cano.biblioteca.db.ConectorDB;
 import com.benat.cano.biblioteca.model.Alumno;
-import com.benat.cano.biblioteca.model.HistorialPrestamos;
+import com.benat.cano.biblioteca.model.HistoricoPrestamos;
 import com.benat.cano.biblioteca.model.Libro;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,11 +15,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-public class DaoHistorialPrestamo {
+public class DaoHistoricoPrestamo {
 
-    public static HistorialPrestamos getHistorialPrestamo(String id_prestamo) {
+    public static HistoricoPrestamos getHistorialPrestamo(String id_prestamo) {
         ConectorDB connection;
-        HistorialPrestamos prestamo = null;
+        HistoricoPrestamos prestamo = null;
         try {
             connection = new ConectorDB();
             String consulta = "SELECT id_prestamo,dni_alumno,codigo_libro,fecha_prestamo,fecha_devolucion FROM Historico_prestamo WHERE id_prestamo = ?";
@@ -34,7 +34,7 @@ public class DaoHistorialPrestamo {
                 Libro libro = DaoLibro.getLibro(codigo_libro);
                 LocalDateTime fecha_prestamo = rs.getTimestamp("fecha_prestamo").toLocalDateTime();
                 LocalDateTime fecha_devolucion = rs.getTimestamp("fecha_devolucion").toLocalDateTime();
-                prestamo = new HistorialPrestamos(id_prestamo_db, alumno, libro, fecha_prestamo, fecha_devolucion);
+                prestamo = new HistoricoPrestamos(id_prestamo_db, alumno, libro, fecha_prestamo, fecha_devolucion);
             }
             rs.close();
             connection.closeConexion();
@@ -46,9 +46,9 @@ public class DaoHistorialPrestamo {
         return prestamo;
     }
 
-    public static ObservableList<HistorialPrestamos> historialDeAlumno(Alumno alumno) {
+    public static ObservableList<HistoricoPrestamos> historialDeAlumno(Alumno alumno) {
         ConectorDB connection;
-        ObservableList<HistorialPrestamos> prestamos = FXCollections.observableArrayList();
+        ObservableList<HistoricoPrestamos> prestamos = FXCollections.observableArrayList();
         try{
             connection = new ConectorDB();
             String consulta = "SELECT id_prestamo,dni_alumno,codigo_libro,fecha_prestamo,fecha_devolucion FROM Historico_prestamo WHERE dni_alumno = ?";
@@ -63,7 +63,7 @@ public class DaoHistorialPrestamo {
                 Libro libro = DaoLibro.getLibro(codigo_libro);
                 LocalDateTime fecha_prestamo = rs.getTimestamp("fecha_prestamo").toLocalDateTime();
                 LocalDateTime fecha_devolucion = rs.getTimestamp("fecha_devolucion").toLocalDateTime();
-                HistorialPrestamos prestamo = new HistorialPrestamos(id_prestamo_db, alumno_db, libro, fecha_prestamo, fecha_devolucion);
+                HistoricoPrestamos prestamo = new HistoricoPrestamos(id_prestamo_db, alumno_db, libro, fecha_prestamo, fecha_devolucion);
                 prestamos.add(prestamo);
             }
             rs.close();
@@ -76,9 +76,9 @@ public class DaoHistorialPrestamo {
         return prestamos;
     }
 
-    public static ObservableList<HistorialPrestamos> cargarListado() {
+    public static ObservableList<HistoricoPrestamos> cargarListado() {
         ConectorDB connection;
-        ObservableList<HistorialPrestamos> prestamos = FXCollections.observableArrayList();
+        ObservableList<HistoricoPrestamos> prestamos = FXCollections.observableArrayList();
         try{
             connection = new ConectorDB();
             String consulta = "SELECT id_prestamo,dni_alumno,codigo_libro,fecha_prestamo,fecha_devolucion FROM Historico_prestamo";
@@ -92,7 +92,7 @@ public class DaoHistorialPrestamo {
                 Libro libro = DaoLibro.getLibro(codigo_libro);
                 LocalDateTime fecha_prestamo = rs.getTimestamp("fecha_prestamo").toLocalDateTime();
                 LocalDateTime fecha_devolucion = rs.getTimestamp("fecha_devolucion").toLocalDateTime();
-                HistorialPrestamos prestamo = new HistorialPrestamos(id_prestamo_db, alumno, libro, fecha_prestamo, fecha_devolucion);
+                HistoricoPrestamos prestamo = new HistoricoPrestamos(id_prestamo_db, alumno, libro, fecha_prestamo, fecha_devolucion);
                 prestamos.add(prestamo);
             }
             rs.close();
@@ -105,7 +105,7 @@ public class DaoHistorialPrestamo {
         return prestamos;
     }
 
-    public static boolean modificar(HistorialPrestamos prestamo) {
+    public static boolean modificar(HistoricoPrestamos prestamo) {
         ConectorDB connection;
         PreparedStatement ps;
         try {
@@ -129,7 +129,7 @@ public class DaoHistorialPrestamo {
         }
     }
 
-    public  static boolean insertar(HistorialPrestamos prestamo) {
+    public  static boolean insertar(HistoricoPrestamos prestamo) {
         ConectorDB connection;
         PreparedStatement ps;
         try {
@@ -153,7 +153,7 @@ public class DaoHistorialPrestamo {
         }
     }
 
-    public static boolean eliminar(HistorialPrestamos prestamo) {
+    public static boolean eliminar(HistoricoPrestamos prestamo) {
         ConectorDB connection;
         PreparedStatement ps;
         try {
