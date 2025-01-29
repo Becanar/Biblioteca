@@ -2,11 +2,14 @@ package com.benat.cano.biblioteca.controller;
 
 import com.benat.cano.biblioteca.app.App;
 import com.benat.cano.biblioteca.dao.DaoAlumno;
+import com.benat.cano.biblioteca.dao.DaoLibro;
 import com.benat.cano.biblioteca.model.Alumno;
 import com.benat.cano.biblioteca.model.Libro;
 import com.benat.cano.biblioteca.model.Prestamo;
 import com.benat.cano.biblioteca.model.Propiedades;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +28,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -201,7 +207,64 @@ public class BibliotecaController {
     }
 
     private void cargarLibros() {
+        // Lista observable para almacenar los libros
+        ObservableList<Libro> listaLibros = DaoLibro.cargarListado();
+
+        // Definir la imagen predeterminada (null.jpg)
+        String imagenPredeterminada = "/com/benat/cano/biblioteca/images/null.jpg";
+        Image imagenNull = new Image(getClass().getResourceAsStream(imagenPredeterminada));
+
+        // Asignar la lista de libros al TableView
+        tablaVista.setItems(listaLibros);
+
+        // Limpiar las columnas actuales antes de agregar las nuevas
+        tablaVista.getColumns().clear();
+
+        // Crear las columnas de la tabla para los libros
+        TableColumn<Libro, Integer> codigoColumna = new TableColumn<>("Código");
+        codigoColumna.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getCodigo()).asObject());
+
+        TableColumn<Libro, String> tituloColumna = new TableColumn<>("Título");
+        tituloColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitulo()));
+
+        TableColumn<Libro, String> autorColumna = new TableColumn<>("Autor");
+        autorColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAutor()));
+
+        TableColumn<Libro, String> editorialColumna = new TableColumn<>("Editorial");
+        editorialColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEditorial()));
+
+        TableColumn<Libro, String> estadoColumna = new TableColumn<>("Estado");
+        estadoColumna.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEstado()));
+
+        // Columna de portada (imagen)
+        TableColumn<Libro, ImageView> portadaColumna = new TableColumn<>("Portada");
+        portadaColumna.setCellValueFactory(cellData -> {
+            Blob portadaBlob = cellData.getValue().getPortada();
+            ImageView imageView;
+
+            if (portadaBlob != null) {
+                try {
+                    byte[] bytes = portadaBlob.getBytes(1, (int) portadaBlob.length());
+                    Image img = new Image(new ByteArrayInputStream(bytes));
+                    imageView = new ImageView(img);
+                } catch (SQLException e) {
+                    System.err.println("Error al leer el BLOB de la portada: " + e.getMessage());
+                    imageView = new ImageView(imagenNull);
+                }
+            } else {
+                imageView = new ImageView(imagenNull);
+            }
+
+            // Ajustar el tamaño de la imagen
+            imageView.setFitHeight(50);
+            imageView.setFitWidth(50);
+            return new SimpleObjectProperty<>(imageView);
+        });
+
+        // Agregar las columnas a la tabla
+        tablaVista.getColumns().addAll(codigoColumna, tituloColumna, autorColumna, editorialColumna, estadoColumna, portadaColumna);
     }
+
 
     private void cargarAlumnos() {
         // Obtener la lista de alumnos desde el DAO
@@ -730,45 +793,7 @@ public class BibliotecaController {
      */
 
     public void cambiarIdioma(String idioma) {
-        // Actualizar el archivo db.properties con el nuevo idioma
-        Propiedades.setIdioma("language", idioma);
-
-        // Cargar el nuevo ResourceBundle con el idioma seleccionado
-        ResourceBundle bundle = ResourceBundle.getBundle("com.benat.cano.biblioteca.languages.lan", new Locale(idioma));
-
-        // Obtener la ventana actual (en este caso el Stage principal)
-        Stage stage = (Stage) btAniadir.getScene().getWindow();
-
-        // Actualizar la ventana principal
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/benat/cano/biblioteca/fxml/biblioteca.fxml"), bundle);
-            Scene scene = new Scene(fxmlLoader.load());
-            stage.setTitle(bundle.getString("app.name"));
-            stage.setResizable(false);
-
-            try {
-                Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
-                stage.getIcons().add(img);
-            } catch (Exception e) {
-                System.out.println(bundle.getString("error.img") + e.getMessage());
-            }
-
-            scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
-            stage.setTitle(bundle.getString("app.name"));
-            stage.setScene(scene);
-            stage.show();
-
-            // Cierra todas las ventanas auxiliares y vuelve a abrirlas con el idioma actualizado (si es necesario)
-            // Ejemplo:
-            if (stage.getOwner() != null) {
-                Stage owner = (Stage)stage.getOwner();
-                // Aquí puedes usar un código para reiniciar o actualizar otras ventanas hijas
-                // owner.close();  // O también puedes recargar otras ventanas
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        
     }
 
     /**
