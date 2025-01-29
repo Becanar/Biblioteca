@@ -612,7 +612,7 @@ public class BibliotecaController {
                         System.out.println("error.img " + e.getMessage());
                     }
                     scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("students"));
+                    stage.setTitle(resources.getString("books"));
                     stage.initOwner(ventana);
                     stage.initModality(Modality.APPLICATION_MODAL);
                     stage.showAndWait();
@@ -620,6 +620,37 @@ public class BibliotecaController {
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                     alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
+                }
+            }else{
+                if (seleccion.equals(resources.getString("borrows"))) {
+
+                    try {
+                        Window ventana = tablaVista.getScene().getWindow();
+                        String idioma = Propiedades.getValor("language");
+                        ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/prestamos.fxml"), bundle);
+                        PrestamosController controlador = new PrestamosController();  // Pasamos la Participación seleccionada
+                        fxmlLoader.setController(controlador);
+                        Scene scene = new Scene(fxmlLoader.load());
+                        Stage stage = new Stage();
+                        stage.setScene(scene);
+                        stage.setResizable(false);
+                        try {
+                            Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
+                            stage.getIcons().add(img);
+                        } catch (Exception e) {
+                            System.out.println("error.img " + e.getMessage());
+                        }
+                        scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
+                        stage.setTitle(resources.getString("borrows"));
+                        stage.initOwner(ventana);
+                        stage.initModality(Modality.APPLICATION_MODAL);
+                        stage.showAndWait();
+                        cargarPrestamos();
+                    } catch (IOException e) {
+                        System.err.println(e.getMessage());
+                        alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
+                    }
                 }
             }
         }
