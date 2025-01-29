@@ -31,10 +31,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.function.Supplier;
 
 public class BibliotecaController {
 
@@ -446,6 +444,24 @@ public class BibliotecaController {
      * @param o El objeto a eliminar, dependiendo de la selección de la tabla.
      */
     private void borrar(Object o) {
+        Object seleccion = tablaVista.getSelectionModel().getSelectedItem();
+        if (seleccion != null) {
+            String item = comboBoxDatos.getSelectionModel().getSelectedItem();
+
+            if (item.equals(resources.getString("students"))) {
+                Alumno olimpiada = (Alumno) seleccion;
+                if (DaoAlumno.esEliminable(olimpiada)) {
+                    mostrarConfirmacionYEliminar(resources.getString("students"), resources.getString("confirm.delete.olympics"),
+                            () -> DaoAlumno.eliminar(olimpiada), this::cargarAlumnos);
+                } else {
+                    alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.olympic"))));
+                }
+
+            }
+        } else {
+            alerta(new ArrayList<>(Arrays.asList(resources.getString("select"))));
+        }
+
     }
 
     /**
@@ -492,7 +508,31 @@ public class BibliotecaController {
             }
         }
     }
-
+    /**
+     * Muestra una alerta de confirmación para la eliminación de una entidad seleccionada.
+     * Si el usuario confirma, se realiza la eliminación y se actualiza la vista correspondiente.
+     *
+     * @param tipoElemento El nombre de la entidad que se va a eliminar (ej. "Olimpiada", "Deportista").
+     * @param mensajeConfirmacion El mensaje de confirmación a mostrar.
+     * @param eliminacion La acción a ejecutar para eliminar la entidad.
+     * @param recargar La acción para recargar la vista después de la eliminación.
+     */
+    private void mostrarConfirmacionYEliminar(String tipoElemento, String mensajeConfirmacion, Supplier<Boolean> eliminacion, Runnable recargar) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(tablaVista.getScene().getWindow());
+        alert.setHeaderText(null);
+        alert.setTitle(resources.getString("confirmation"));
+        alert.setContentText(mensajeConfirmacion);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (eliminacion.get()) {  // Llamar a .get() en lugar de .run() para el Supplier
+                recargar.run();
+                confirmacion(""+tipoElemento + " eliminado exitosamente.");
+            } else {
+                alerta(new ArrayList<>(Arrays.asList("No se pudo eliminar el " + tipoElemento.toLowerCase() + ".")));
+            }
+        }
+    }
     /**
      * Cambia el idioma de la aplicación a inglés.
      * Este método se ejecuta cuando se selecciona la opción de cambiar a inglés.
