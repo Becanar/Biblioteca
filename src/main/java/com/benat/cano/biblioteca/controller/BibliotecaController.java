@@ -565,7 +565,7 @@ public class BibliotecaController {
                     String idioma = Propiedades.getValor("language");
                     ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/libros.fxml"), bundle);
-                    AlumnosController controlador = new AlumnosController();  // Pasamos la Participación seleccionada
+                    LibrosController controlador = new LibrosController();  // Pasamos la Participación seleccionada
                     fxmlLoader.setController(controlador);
                     Scene scene = new Scene(fxmlLoader.load());
                     Stage stage = new Stage();
@@ -582,7 +582,7 @@ public class BibliotecaController {
                     stage.initOwner(ventana);
                     stage.initModality(Modality.APPLICATION_MODAL);
                     stage.showAndWait();
-                    cargarAlumnos();
+                    cargarLibros();
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                     alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));

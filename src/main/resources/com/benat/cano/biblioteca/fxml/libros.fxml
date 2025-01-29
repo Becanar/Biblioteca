@@ -64,7 +64,7 @@
             <VBox maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                <children>
                   <Label text="%books.name" />
-                  <TextField fx:id="txtNombre">
+                  <TextField fx:id="txtTitulo">
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
@@ -75,13 +75,13 @@
                      </VBox.margin>
                   </FlowPane>
                   <Label text="%books.author" />
-                  <TextField fx:id="txtNombre1" />
+                  <TextField fx:id="txtAutor" />
                   <Label text="%books.editorial">
                      <VBox.margin>
                         <Insets top="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="txtPeso" maxWidth="194.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="194.0">
+                  <TextField fx:id="txtEditorial" maxWidth="194.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="194.0">
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
@@ -94,7 +94,7 @@
                         <Insets top="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="txtAltura" maxWidth="194.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="194.0">
+                  <TextField fx:id="txtEstado" maxWidth="194.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="194.0">
                      <tooltip>
                         <Tooltip text="%athlete.height.tooltip" />
                      </tooltip></TextField>

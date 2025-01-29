@@ -4,10 +4,8 @@ import com.benat.cano.biblioteca.db.ConectorDB;
 import com.benat.cano.biblioteca.model.Libro;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import java.io.*;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,6 +42,37 @@ public class DaoLibro {
         }
         return libro;
     }
+    public static Libro getLibroPorTitulo(String tituloLibro) {
+        ConectorDB connection;
+        Libro libro = null;
+        try {
+            connection = new ConectorDB();
+            String consulta = "SELECT codigo, titulo, autor, editorial, estado, baja, portada FROM Libro WHERE titulo = ?";
+            PreparedStatement ps = connection.getConnection().prepareStatement(consulta);
+            ps.setString(1, tituloLibro);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int codigo_db = rs.getInt("codigo");
+                String titulo = rs.getString("titulo");
+                String autor = rs.getString("autor");
+                String editorial = rs.getString("editorial");
+                String estado = rs.getString("estado");
+                int baja = rs.getInt("baja");
+                Blob portada = rs.getBlob("portada");
+                libro = new Libro(codigo_db, titulo, autor, editorial, estado, baja, portada);
+            }
+
+            rs.close();
+            connection.closeConexion();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return libro;
+    }
+
 
     public static ObservableList<Libro> cargarListado() {
         ConectorDB connection;
@@ -74,25 +103,32 @@ public class DaoLibro {
         return libros;
     }
 
-    public static Blob convertFileToBlob(File file) {
-        ConectorDB connection;
-        try {
-            connection = new ConectorDB();
-            try (Connection conn = connection.getConnection();
-                 FileInputStream inputStream = new FileInputStream(file)) {
-                Blob blob = conn.createBlob();
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                try (var outputStream = blob.setBinaryStream(1)) {
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
+    /**
+     * Convierte un archivo de tipo File a un objeto Blob para ser almacenado en la base de datos.
+     *
+     * @param file el archivo a convertir a Blob
+     * @return el Blob generado a partir del archivo
+     * @throws SQLException en caso de errores al trabajar con la base de datos
+     * @throws IOException  en caso de errores al leer el archivo
+     */
+    public static Blob convertFileToBlob(File file) throws SQLException, IOException {
+        ConectorDB connection = new ConectorDB();
+        // Open a connection to the database
+        try (Connection conn = connection.getConnection();
+             FileInputStream inputStream = new FileInputStream(file)) {
+
+            // Create Blob
+            Blob blob = conn.createBlob();
+            // Write the file's bytes to the Blob
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            try (var outputStream = blob.setBinaryStream(1)) {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
                 }
-                return blob;
             }
-        } catch (SQLException | IOException e) {
-            System.err.println(e.getMessage());
-            return null;
+            return blob;
         }
     }
 
