@@ -462,6 +462,35 @@ public class BibliotecaController {
 
     @FXML
     void aniadir(ActionEvent event) {
+        String seleccion = comboBoxDatos.getSelectionModel().getSelectedItem();
+        if (seleccion.equals(resources.getString("students"))) {
+
+            try {
+                Window ventana = tablaVista.getScene().getWindow();
+                String idioma = Propiedades.getValor("language");
+                ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/alumnos.fxml"), bundle);
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.setResizable(false);
+                try {
+                    Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
+                    stage.getIcons().add(img);
+                } catch (Exception e) {
+                    System.out.println("error.img " + e.getMessage());
+                }
+                scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
+                stage.setTitle(resources.getString("students"));
+                stage.initOwner(ventana);
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.showAndWait();
+                cargarAlumnos();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
+            }
+        }
     }
 
     /**

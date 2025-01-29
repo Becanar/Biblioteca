@@ -42,16 +42,16 @@
             <Label text="%students.name" GridPane.rowIndex="1" />
             <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="%students.id" GridPane.rowIndex="2" />
-            <TextField fx:id="txtAnio" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <TextField fx:id="txtID" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <tooltip>
                   <Tooltip text="%olympics.year.tooltip" />
                </tooltip></TextField>
             <Label text="%students.surname1" GridPane.rowIndex="3" />
             <Label text="%students.surname2" GridPane.rowIndex="4" />
-            <TextField fx:id="txtCiudad" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="txtS1" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <FlowPane alignment="CENTER_LEFT" hgap="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
-                  <TextField fx:id="txtCiudad1" prefHeight="26.0" prefWidth="161.0" />
+                  <TextField fx:id="txtS2" prefHeight="26.0" prefWidth="161.0" />
                </children>
             </FlowPane>
          </children>
