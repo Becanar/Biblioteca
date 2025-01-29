@@ -349,6 +349,8 @@ public class BibliotecaController {
         lstEntera.addAll(libros);
         // Asignar la lista de libros al TableView
         tablaVista.setItems(libros);
+        ObservableList<Libro> librosActivos = libros.filtered(libro -> libro.getBaja() == 0);
+        tablaVista.setItems(librosActivos);
 
         // Crear las columnas de la tabla para los libros
         TableColumn<Libro, Integer> codigoColumna = new TableColumn<>("Código");
@@ -468,6 +470,38 @@ public class BibliotecaController {
                     System.err.println(e.getMessage());
                     alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
                 }
+            }else{
+                if (item.equals(resources.getString("books"))) {
+                    // Olimpiada
+                    Libro libro = (Libro) seleccion;
+                    try {
+                        Window ventana = tablaVista.getScene().getWindow();
+                        String idioma = Propiedades.getValor("language");
+                        ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/libros.fxml"), bundle);
+                        LibrosController controlador = new LibrosController( libro );  // Pasamos la Participación seleccionada
+                        fxmlLoader.setController(controlador);
+                        Scene scene = new Scene(fxmlLoader.load());
+                        Stage stage = new Stage();
+                        stage.setScene(scene);
+                        stage.setResizable(false);
+                        try {
+                            Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
+                            stage.getIcons().add(img);
+                        } catch (Exception e) {
+                            System.out.println("error.img " + e.getMessage());
+                        }
+                        scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
+                        stage.setTitle(resources.getString("students"));
+                        stage.initOwner(ventana);
+                        stage.initModality(Modality.APPLICATION_MODAL);
+                        stage.showAndWait();
+                        cargarLibros();
+                    } catch (IOException e) {
+                        System.err.println(e.getMessage());
+                        alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
+                    }
+                }
             }
         } else {
             alerta(new ArrayList<>(Arrays.asList(resources.getString("select.ed"))));
@@ -500,7 +534,7 @@ public class BibliotecaController {
                     Libro olimpiada = (Libro) seleccion;
                     if (DaoLibro.esEliminable(olimpiada)) {
                         mostrarConfirmacionYEliminar(resources.getString("books"), resources.getString("confirm.delete.olympics"),
-                                () -> DaoLibro.eliminar(olimpiada), this::cargarLibros);
+                                () -> DaoLibro.darDeBaja(olimpiada), this::cargarLibros);
                     } else {
                         alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.olympic"))));
                     }

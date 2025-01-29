@@ -42,14 +42,16 @@ public class DaoLibro {
         }
         return libro;
     }
-    public static Libro getLibroPorTitulo(String tituloLibro) {
+    public static Libro getLibroPorTituloYAutor(String tituloLibro, String autorLibro) {
         ConectorDB connection;
         Libro libro = null;
         try {
             connection = new ConectorDB();
-            String consulta = "SELECT codigo, titulo, autor, editorial, estado, baja, portada FROM Libro WHERE titulo = ?";
+            // Modificamos la consulta SQL para que busque por título y autor
+            String consulta = "SELECT codigo, titulo, autor, editorial, estado, baja, portada FROM Libro WHERE titulo = ? AND autor = ?";
             PreparedStatement ps = connection.getConnection().prepareStatement(consulta);
-            ps.setString(1, tituloLibro);
+            ps.setString(1, tituloLibro);  // Asignamos el valor del título
+            ps.setString(2, autorLibro);   // Asignamos el valor del autor
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -72,6 +74,7 @@ public class DaoLibro {
         }
         return libro;
     }
+
 
 
     public static ObservableList<Libro> cargarListado() {

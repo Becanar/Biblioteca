@@ -46,6 +46,7 @@ public class LibrosController implements Initializable {
     private File imagenSeleccionada;
     @FXML
     private ResourceBundle resources;
+
     /**
      * Constructor vacío para la creación de un nuevo alumno.
      */
@@ -88,7 +89,9 @@ public class LibrosController implements Initializable {
                 foto.setImage(new Image(getClass().getResourceAsStream("/com/benat/cano/biblioteca/images/null.jpg")));
                 btnFotoBorrar.setDisable(true);
             }
-    }}
+        }
+    }
+
     /**
      * Método para borrar la foto del libro.
      */
@@ -108,79 +111,89 @@ public class LibrosController implements Initializable {
         stage.close();
     }
 
-    /**
-     * Método para guardar o actualizar un libro.
-     */
     @FXML
     void guardar(ActionEvent event) {
         ArrayList<String> errores = validar();
 
         if (!errores.isEmpty()) {
             alerta(errores);
+            return;
+        }
+
+        boolean esEdicion = (this.libro != null && this.libro.getCodigo() > 0);
+
+        Libro nuevo = new Libro();
+        nuevo.setTitulo(txtTitulo.getText().trim());
+        nuevo.setAutor(txtAutor.getText().trim());
+        nuevo.setEditorial(txtEditorial.getText().trim());
+        nuevo.setEstado(txtEstado.getText().trim());
+
+        if (esEdicion) {
+            nuevo.setCodigo(this.libro.getCodigo());
+            nuevo.setBaja(this.libro.getBaja());
+            nuevo.setPortada(this.libro.getPortada());
         } else {
-            Libro nuevo = new Libro();
-            nuevo.setTitulo(txtTitulo.getText());
-            nuevo.setAutor(txtAutor.getText());
-            nuevo.setEditorial(txtAutor.getText());
-            nuevo.setEstado(txtAutor.getText());
-            nuevo.setPortada(this.imagen);
+            nuevo.setBaja(0);
+        }
 
-            Libro existente = DaoLibro.getLibroPorTitulo(txtTitulo.getText());
-            if (/*!existente.getAutor().equals(nuevo.getAutor())*/existente==null ) {//esto seria que tienen mismo titulo y autor
-
-                if (this.imagen == null) {
-                    try {
-                        // Usa una imagen predeterminada en caso de que la imagen esté ausente
-                        URL resourceUrl = getClass().getResource("/com/benat/cano/biblioteca/images/null.jpg");
-                        File imagenDefault = null;
-                        if (resourceUrl != null) {
-                            imagenDefault = new File(resourceUrl.toURI());
-                        } else {
-                            System.err.println("Imagen predeterminada no encontrada.");
-                        }
-
-                        Blob defaultBlob = DaoLibro.convertFileToBlob(imagenDefault);
-                        nuevo.setPortada(defaultBlob);
-                    } catch (Exception e) {
-                        errores.add("Error al cargar la imagen predeterminada.");
-                        alerta(errores);
-                        return;
-                    }
-                } else {
-                    nuevo.setPortada(this.imagen);
-                }
-                nuevo.setBaja(0);
-                    int id = DaoLibro.insertar(nuevo);
-                    if (id == -1) {
-                        ArrayList<String> failMessages = new ArrayList<>();
-                        failMessages.add(resources.getString("save.fail"));
-                        alerta(failMessages);
-                    } else {
-                        ArrayList<String> successMessages = new ArrayList<>();
-                        successMessages.add(resources.getString("save.athlete"));
-                        confirmacion(successMessages);
-                        Stage stage = (Stage) txtTitulo.getScene().getWindow();
-                        stage.close();
-                    }
-
-            } else {
+        // Verificar si el libro ya existe antes de insertar (solo si es nuevo)
+        if (!esEdicion) {
+            Libro libroExistente = DaoLibro.getLibroPorTituloYAutor(nuevo.getTitulo(), nuevo.getAutor());
+            if (libroExistente != null) {
                 ArrayList<String> failMessages = new ArrayList<>();
-                failMessages.add(resources.getString("duplicate.athlete"));
+                failMessages.add("Ya existe un libro con este título y autor.");
                 alerta(failMessages);
-            }/*else {
-                // Actualizar deportista existente
-                if (DaoDeportista.modificar(this.deportista, nuevo)) {
-                    ArrayList<String> successMessages = new ArrayList<>();
-                    successMessages.add(resources.getString("update.athlete"));
-                    confirmacion(successMessages);
-                    Stage stage = (Stage) txtNombre.getScene().getWindow();
-                    stage.close();
+                return; // Evitar que se inserte
+            }
+        }
+
+        // Si no se ha seleccionado una imagen, usar la predeterminada
+        if (this.imagen == null) {
+            try {
+                URL resourceUrl = getClass().getResource("/com/benat/cano/biblioteca/images/null.jpg");
+                if (resourceUrl != null) {
+                    File imagenDefault = new File(resourceUrl.toURI());
+                    Blob defaultBlob = DaoLibro.convertFileToBlob(imagenDefault);
+                    nuevo.setPortada(defaultBlob);
                 } else {
-                    ArrayList<String> failMessages = new ArrayList<>();
-                    failMessages.add(resources.getString("save.fail"));
-                    alerta(failMessages);
+                    System.err.println("Imagen predeterminada no encontrada.");
                 }
-            }*/
+            } catch (Exception e) {
+                errores.add("Error al cargar la imagen predeterminada.");
+                alerta(errores);
+                return;
+            }
+        } else {
+            nuevo.setPortada(this.imagen);
+        }
+
+        // Si estamos editando, modificar
+        if (esEdicion) {
+            if (DaoLibro.modificar(nuevo)) {
+                ArrayList<String> mensajes = new ArrayList<>();
+                mensajes.add("Libro actualizado correctamente.");
+                confirmacion(mensajes);
+                Stage stage = (Stage) txtTitulo.getScene().getWindow();
+                stage.close();
+            } else {
+                ArrayList<String> mensajes = new ArrayList<>();
+                mensajes.add("Error al actualizar el libro.");
+                alerta(mensajes);
+            }
+        } else {
+            // Insertar nuevo
+            int id = DaoLibro.insertar(nuevo);
+            if (id == -1) {
+                ArrayList<String> mensajes = new ArrayList<>();
+                mensajes.add("Error al guardar el libro.");
+                alerta(mensajes);
+            } else {
+                ArrayList<String> mensajes = new ArrayList<>();
+                mensajes.add("Libro guardado correctamente.");
+                confirmacion(mensajes);
+                Stage stage = (Stage) txtTitulo.getScene().getWindow();
+                stage.close();
+            }
         }
     }
 
