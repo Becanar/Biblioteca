@@ -3,6 +3,7 @@ package com.benat.cano.biblioteca.controller;
 import com.benat.cano.biblioteca.app.App;
 import com.benat.cano.biblioteca.dao.DaoAlumno;
 import com.benat.cano.biblioteca.dao.DaoLibro;
+import com.benat.cano.biblioteca.dao.DaoPrestamo;
 import com.benat.cano.biblioteca.model.Alumno;
 import com.benat.cano.biblioteca.model.Libro;
 import com.benat.cano.biblioteca.model.Prestamo;
@@ -88,6 +89,12 @@ public class BibliotecaController {
     private TableView tablaVista;
 
     @FXML
+    private RadioButton radioNombre;
+
+    @FXML
+    private RadioButton radioCodigo;
+
+    @FXML
     private TextField txtNombre;
 
     @FXML
@@ -127,6 +134,10 @@ public class BibliotecaController {
             }
         });
         txtNombre.setOnKeyTyped(keyEvent -> filtrar());
+        ToggleGroup grupoBusqueda = new ToggleGroup();
+        radioNombre.setToggleGroup(grupoBusqueda);
+        radioCodigo.setToggleGroup(grupoBusqueda);
+        radioNombre.setSelected(true);
     }
     /**
      * Filtra las entidades mostradas en la tabla según el texto ingresado en el campo de búsqueda.
@@ -135,32 +146,53 @@ public class BibliotecaController {
     private void filtrar() {
         String valor = txtNombre.getText();
         if (valor == null || valor.isEmpty()) {
+            // Si no hay texto, mostramos toda la lista
             tablaVista.setItems(lstEntera);
-        } else {
-            valor = valor.toLowerCase();
-            lstFiltrada.clear();
-            for (Object item : lstEntera) {
-                String nombre;
+            return;
+        }
+
+        valor = valor.toLowerCase();
+        lstFiltrada.clear(); // Limpiamos la lista filtrada
+
+        boolean buscarPorNombre = radioNombre.isSelected(); // Verifica qué radio button está seleccionado
+
+        // Iteramos por todos los elementos de lstEntera
+        for (Object item : lstEntera) {
+            String criterioBusqueda = "";
+
+            // Verifica el tipo del objeto en la lista
+            System.out.println("Procesando objeto de clase: " + item.getClass().getName());
+
+            if (buscarPorNombre) { // Si buscamos por nombre/título
                 if (item instanceof Alumno) {
-                    nombre = ((Alumno) item).getNombre();
+                    System.out.println("Es un Alumno");
+                    criterioBusqueda = ((Alumno) item).getNombre();
                 } else if (item instanceof Libro) {
-                    nombre = ((Libro) item).getTitulo();
-                } /*else if (item instanceof Prestamo) {
-                    nombre = ((Equipo) item).getNombre();
-                } else if (item instanceof Evento) {
-                    nombre = ((Evento) item).getNombre();
-                } else if (item instanceof Deporte) {
-                    nombre = ((Deporte) item).getNombre();
-                } */else {
-                    continue;
+                    System.out.println("Es un Libro");
+                    criterioBusqueda = ((Libro) item).getTitulo();
                 }
-                if (nombre.toLowerCase().contains(valor)) {
-                    lstFiltrada.add(item);
+            } else { // Si buscamos por código/dni
+                if (item instanceof Alumno) {
+                    System.out.println("Es un Alumno");
+                    criterioBusqueda = ((Alumno) item).getDni();
+                } else if (item instanceof Libro) {
+                    System.out.println("Es un Libro");
+                    criterioBusqueda = String.valueOf(((Libro) item).getCodigo());
                 }
             }
-            tablaVista.setItems(lstFiltrada);
+
+            // Convertimos a minúsculas para hacer la búsqueda insensible al caso
+            if (criterioBusqueda != null && criterioBusqueda.toLowerCase().contains(valor)) {
+                lstFiltrada.add(item);  // Añadimos el item a la lista filtrada si coincide
+            }
         }
+
+        // Actualizamos la vista con los elementos filtrados
+        tablaVista.setItems(lstFiltrada);
     }
+
+
+
     /**
      * Actualiza la tabla según el valor seleccionado en el ComboBox.
      * Dependiendo de la opción seleccionada (Olimpiadas, Deportistas, Equipos, Eventos, Deportes o Participaciones),
@@ -204,21 +236,44 @@ public class BibliotecaController {
     }
 
     private void cargarPrestamos() {
+        if (tablaVista.getColumns().isEmpty()) {
+            // Columna de ID del préstamo
+            TableColumn<Prestamo, Integer> colId = new TableColumn<>("ID Préstamo");
+            colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId_prestamo()).asObject());
+
+            // Columna de Alumno
+            TableColumn<Prestamo, String> colAlumno = new TableColumn<>("Alumno");
+            colAlumno.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAlumno().getNombre()));
+
+            // Columna de Libro
+            TableColumn<Prestamo, String> colLibro = new TableColumn<>("Libro");
+            colLibro.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLibro().getTitulo()));
+
+            // Columna de Fecha de Préstamo
+            TableColumn<Prestamo, String> colFecha = new TableColumn<>("Fecha de Préstamo");
+            colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_prestamo().toString()));
+
+            // Añadir las columnas a la tabla
+            tablaVista.getColumns().addAll(colId, colAlumno, colLibro, colFecha);
+        }
+
+        // Cargar los préstamos en la tabla
+        ObservableList<Prestamo> prestamos = DaoPrestamo.cargarListado();
+        tablaVista.setItems(prestamos);
     }
+
 
     private void cargarLibros() {
         // Lista observable para almacenar los libros
-        ObservableList<Libro> listaLibros = DaoLibro.cargarListado();
+        ObservableList<Libro> libros = DaoLibro.cargarListado();
 
+        lstEntera.clear();
         // Definir la imagen predeterminada (null.jpg)
         String imagenPredeterminada = "/com/benat/cano/biblioteca/images/null.jpg";
         Image imagenNull = new Image(getClass().getResourceAsStream(imagenPredeterminada));
-
+        lstEntera.addAll(libros);
         // Asignar la lista de libros al TableView
-        tablaVista.setItems(listaLibros);
-
-        // Limpiar las columnas actuales antes de agregar las nuevas
-        tablaVista.getColumns().clear();
+        tablaVista.setItems(libros);
 
         // Crear las columnas de la tabla para los libros
         TableColumn<Libro, Integer> codigoColumna = new TableColumn<>("Código");
@@ -261,7 +316,7 @@ public class BibliotecaController {
             return new SimpleObjectProperty<>(imageView);
         });
 
-        // Agregar las columnas a la tabla
+        tablaVista.getColumns().clear();
         tablaVista.getColumns().addAll(codigoColumna, tituloColumna, autorColumna, editorialColumna, estadoColumna, portadaColumna);
     }
 
@@ -303,202 +358,7 @@ public class BibliotecaController {
      */
 
     private void editar(Object o) {
-        // Obtener el objeto seleccionado desde la tabla
-       /* Object seleccion = tablaVista.getSelectionModel().getSelectedItem();
 
-        if (seleccion != null) {
-            String item = comboBoxDatos.getSelectionModel().getSelectedItem();
-
-            if (item.equals(resources.getString("olympics"))) {
-                // Olimpiada
-                Olimpiada olimpiada = (Olimpiada) seleccion;
-                try {
-                    Window ventana = tablaVista.getScene().getWindow();
-                    String idioma = Propiedades.getValor("language");
-                    ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/alumnos.fxml"), bundle);
-                    AlumnosController controlador = new AlumnosController(olimpiada);  // Pasamos la Olimpiada seleccionada
-                    fxmlLoader.setController(controlador);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setScene(scene);
-                    stage.setResizable(false);
-                    try {
-                        Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                        stage.getIcons().add(img);
-                    } catch (Exception e) {
-                        System.out.println("error.img " + e.getMessage());
-                    }
-                    scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("olympics"));
-                    stage.initOwner(ventana);
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.showAndWait();
-                    cargarOlimpiadas();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                }
-
-            } else if (item.equals(resources.getString("athletes"))) {
-                // Deportista
-                Deportista deportista = (Deportista) seleccion;
-                try {
-                    Window ventana = tablaVista.getScene().getWindow();
-                    String idioma = Propiedades.getValor("language");
-                    ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/deportista.fxml"), bundle);
-                    DeportistaController controlador = new DeportistaController(deportista);  // Pasamos el Deportista seleccionado
-                    fxmlLoader.setController(controlador);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setScene(scene);
-                    stage.setResizable(false);
-                    try {
-                        Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                        stage.getIcons().add(img);
-                    } catch (Exception e) {
-                        System.out.println("error.img " + e.getMessage());
-                    }
-                    scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("athletes"));
-                    stage.initOwner(ventana);
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.showAndWait();
-                    cargarDeportistas();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                }
-
-            } else if (item.equals(resources.getString("teams"))) {
-                // Equipo
-                Equipo equipo = (Equipo) seleccion;
-                try {
-                    Window ventana = tablaVista.getScene().getWindow();
-                    String idioma = Propiedades.getValor("language");
-                    ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/equipo.fxml"), bundle);
-                    EquiposController controlador = new EquiposController(equipo);  // Pasamos el Equipo seleccionado
-                    fxmlLoader.setController(controlador);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setScene(scene);
-                    stage.setResizable(false);
-                    try {
-                        Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                        stage.getIcons().add(img);
-                    } catch (Exception e) {
-                        System.out.println("error.img " + e.getMessage());
-                    }
-                    scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("teams"));
-                    stage.initOwner(ventana);
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.showAndWait();
-                    cargarEquipos();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                }
-
-            } else if (item.equals(resources.getString("events"))) {
-                // Evento
-                Evento evento = (Evento) seleccion;
-                try {
-                    Window ventana = tablaVista.getScene().getWindow();
-                    String idioma = Propiedades.getValor("language");
-                    ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/evento.fxml"), bundle);
-                    EventoController controlador = new EventoController(evento);  // Pasamos el Evento seleccionado
-                    fxmlLoader.setController(controlador);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setScene(scene);
-                    stage.setResizable(false);
-                    try {
-                        Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                        stage.getIcons().add(img);
-                    } catch (Exception e) {
-                        System.out.println("error.img " + e.getMessage());
-                    }
-                    scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("events"));
-                    stage.initOwner(ventana);
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.showAndWait();
-                    cargarEventos();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                }
-
-            } else if (item.equals(resources.getString("sports"))) {
-                // Deporte
-                Deporte deporte = (Deporte) seleccion;
-                try {
-                    Window ventana = tablaVista.getScene().getWindow();
-                    String idioma = Propiedades.getValor("language");
-                    ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/deportes.fxml"), bundle);
-                    DeportesController controlador = new DeportesController(deporte);  // Pasamos el Deporte seleccionado
-                    fxmlLoader.setController(controlador);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setScene(scene);
-                    stage.setResizable(false);
-                    try {
-                        Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                        stage.getIcons().add(img);
-                    } catch (Exception e) {
-                        System.out.println("error.img " + e.getMessage());
-                    }
-                    scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("sports"));
-                    stage.initOwner(ventana);
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.showAndWait();
-                    cargarDeportes();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                }
-
-            } else if (item.equals(resources.getString("participations"))) {
-                // Participación
-                Participacion participacion = (Participacion) seleccion;
-                try {
-                    Window ventana = tablaVista.getScene().getWindow();
-                    String idioma = Propiedades.getValor("language");
-                    ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/participacion.fxml"), bundle);
-                    ParticipacionController controlador = new ParticipacionController(participacion);  // Pasamos la Participación seleccionada
-                    fxmlLoader.setController(controlador);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setScene(scene);
-                    stage.setResizable(false);
-                    try {
-                        Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                        stage.getIcons().add(img);
-                    } catch (Exception e) {
-                        System.out.println("error.img " + e.getMessage());
-                    }
-                    scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                    stage.setTitle(resources.getString("participations"));
-                    stage.initOwner(ventana);
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.showAndWait();
-                    cargarParticipaciones();
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                    alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                }
-
-            }
-        } else {
-            alerta(new ArrayList<>(Arrays.asList(resources.getString("select.ed"))));
-        }*/
     }
     /**
      * Elimina un elemento de la tabla según la selección del usuario.
@@ -507,75 +367,7 @@ public class BibliotecaController {
      *
      * @param o El objeto a eliminar, dependiendo de la selección de la tabla.
      */
-    private void borrar(Object o) {/*
-        Object seleccion = tablaVista.getSelectionModel().getSelectedItem();
-        if (seleccion != null) {
-            String item = comboBoxDatos.getSelectionModel().getSelectedItem();
-
-            if (item.equals(resources.getString("olympics"))) {
-                // Olimpiada
-                Olimpiada olimpiada = (Olimpiada) seleccion;
-                if (DaoOlimpiada.esEliminable(olimpiada)) {
-                    mostrarConfirmacionYEliminar(resources.getString("olympic"), resources.getString("confirm.delete.olympics"),
-                            () -> DaoOlimpiada.eliminar(olimpiada), this::cargarOlimpiadas);
-                } else {
-                    alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.olympic"))));
-                }
-
-            } else if (item.equals(resources.getString("athletes"))) {
-                // Deportista
-                Deportista deportista = (Deportista) seleccion;
-                if (DaoDeportista.esEliminable(deportista)) {
-                    mostrarConfirmacionYEliminar(resources.getString("athlete"), resources.getString("confirm.delete.athlete"),
-                            () -> DaoDeportista.eliminar(deportista), this::cargarDeportistas);
-                } else {
-
-                    alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.athlete"))));
-                }
-
-            } else if (item.equals(resources.getString("teams"))) {
-                // Equipo
-                Equipo equipo = (Equipo) seleccion;
-                if (DaoEquipo.esEliminable(equipo)) {
-                    mostrarConfirmacionYEliminar(resources.getString("team"), resources.getString("confirm.delete.team"),
-                            () -> DaoEquipo.eliminar(equipo), this::cargarEquipos);
-                } else {
-                    alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.team"))));
-                }
-
-            } else if (item.equals(resources.getString("events"))) {
-                // Evento
-                Evento evento = (Evento) seleccion;
-                if (DaoEvento.esEliminable(evento)) {
-                    mostrarConfirmacionYEliminar(resources.getString("event"),  resources.getString("confirm.delete.event"),
-                            () -> DaoEvento.eliminar(evento), this::cargarEventos);
-                } else {
-                    alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.event"))));
-                }
-
-            } else if (item.equals(resources.getString("sports"))) {
-                // Deporte
-                Deporte deporte = (Deporte) seleccion;
-                if (DaoDeporte.esEliminable(deporte)) {
-                    mostrarConfirmacionYEliminar(resources.getString("sport"),  resources.getString("confirm.delete.sport"),
-                            () -> DaoDeporte.eliminar(deporte), this::cargarDeportes);
-                } else {
-                    alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.sport"))));
-
-                }
-
-            } else if (item.equals(resources.getString("participations"))) {
-                // Participación
-                Participacion participacion = (Participacion) seleccion;
-                mostrarConfirmacionYEliminar(resources.getString("participation"), resources.getString("confirm.delete.participation"),
-                        () -> DaoParticipacion.eliminar(participacion), this::cargarParticipaciones);
-            }
-        } else {
-            alerta(new ArrayList<>(Arrays.asList(resources.getString("select"))));
-        }
-
-*/
-    }
+    private void borrar(Object o) { }
     /**
      * Carga los datos en el ComboBox de selección de tipo de elementos, con las opciones disponibles
      * como "Olimpiadas", "Deportistas", "Equipos", "Eventos", "Deportes" y "Participaciones".
@@ -589,183 +381,7 @@ public class BibliotecaController {
     }
     @FXML
     void aniadir(ActionEvent event) {
-        String seleccion = comboBoxDatos.getSelectionModel().getSelectedItem();
-        System.out.println(seleccion);
-        if (seleccion.equals(resources.getString("students"))) {
-
-            try {
-                Window ventana = tablaVista.getScene().getWindow();
-                String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/alumnos.fxml"), bundle);
-                AlumnosController controlador = new AlumnosController();
-                fxmlLoader.setController(controlador);
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
-                try {
-                    Image img = new Image(getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString());
-                    stage.getIcons().add(img);
-                } catch (Exception e) {
-                    System.out.println("error.img " + e.getMessage());
-                }
-                scene.getStylesheets().add(getClass().getResource("/com/benat/cano/biblioteca/estilo/style.css").toExternalForm());
-                stage.setTitle(resources.getString("students"));
-                stage.initOwner(ventana);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-                cargarAlumnos();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-            }
-        } /*else if (seleccion.equals(resources.getString("athletes"))) {
-            try {
-                Window ventana = tablaVista.getScene().getWindow();
-                String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/deportista.fxml"), bundle);
-                DeportistaController controlador = new DeportistaController();
-                fxmlLoader.setController(controlador);
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
-                try {
-                    Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                    stage.getIcons().add(img);
-                } catch (Exception e) {
-                    System.out.println("error.img " + e.getMessage());
-                }
-                scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                stage.setTitle(resources.getString("athletes"));
-                stage.initOwner(ventana);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-                cargarDeportistas();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-            }
-        } else if (seleccion.equals(resources.getString("teams"))) {
-            // Agregar nuevo Equipo
-            try {
-                Window ventana = tablaVista.getScene().getWindow();
-                String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/equipo.fxml"), bundle);
-                EquiposController controlador = new EquiposController();
-                fxmlLoader.setController(controlador);
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
-                try {
-                    Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                    stage.getIcons().add(img);
-                } catch (Exception e) {
-                    System.out.println("error.img " + e.getMessage());
-                }
-                scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                stage.setTitle((resources.getString("teams")));
-                stage.initOwner(ventana);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-                cargarEquipos();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-            }
-        } else if (seleccion.equals(resources.getString("events"))) {
-            // Agregar nuevo Evento
-            try {
-                Window ventana = tablaVista.getScene().getWindow();
-                String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/evento.fxml"), bundle);
-                EventoController controlador = new EventoController();
-                fxmlLoader.setController(controlador);
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
-                try {
-                    Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                    stage.getIcons().add(img);
-                } catch (Exception e) {
-                    System.out.println("error.img " + e.getMessage());
-                }
-                scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                stage.setTitle(resources.getString("events"));
-                stage.initOwner(ventana);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-                cargarEventos();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-            }
-        } else if (seleccion.equals(resources.getString("sports"))) {
-            // Agregar nuevo Deporte
-            try {
-                Window ventana = tablaVista.getScene().getWindow();
-                String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/deportes.fxml"), bundle);
-                DeportesController controlador = new DeportesController();
-                fxmlLoader.setController(controlador);
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
-                try {
-                    Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                    stage.getIcons().add(img);
-                } catch (Exception e) {
-                    System.out.println("error.img " + e.getMessage());
-                }
-                scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                stage.setTitle(resources.getString("sports"));
-                stage.initOwner(ventana);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-                cargarDeportes();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-            }
-        }else if (seleccion.equals(resources.getString("participations"))) {
-            // Agregar nuevo Deporte
-            try {
-                Window ventana = tablaVista.getScene().getWindow();
-                String idioma = Propiedades.getValor("language");
-                ResourceBundle bundle = ResourceBundle.getBundle("/com/example/proyectodein/languages/lan", new Locale(idioma));
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectodein/fxml/participacion.fxml"), bundle);
-                ParticipacionController controlador = new ParticipacionController();
-                fxmlLoader.setController(controlador);
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
-                try {
-                    Image img = new Image(getClass().getResource("/com/example/proyectodein/images/ol.png").toString());
-                    stage.getIcons().add(img);
-                } catch (Exception e) {
-                    System.out.println("error.img " + e.getMessage());
-                }
-                scene.getStylesheets().add(getClass().getResource("/com/example/proyectodein/estilo/style.css").toExternalForm());
-                stage.setTitle(resources.getString("participations"));
-                stage.initOwner(ventana);
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-                cargarParticipaciones();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-            }
         }
-    }*/}
 
     /**
      * Cambia el idioma de la aplicación a inglés.

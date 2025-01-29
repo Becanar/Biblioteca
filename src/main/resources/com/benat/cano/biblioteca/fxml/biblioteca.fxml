@@ -17,6 +17,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.RadioButton?>
 <VBox fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.benat.cano.biblioteca.controller.BibliotecaController">
    <children>
       <MenuBar fx:id="barraMenu" maxWidth="1.7976931348623157E308">
@@ -77,7 +79,19 @@
                   <Tooltip text="%txtNombre.tooltip" />
                </tooltip>
             </TextField>
-            <HBox fx:id="panelHueco" prefHeight="100.0" prefWidth="200.0" />
+            <RadioButton fx:id="radioNombre" text="Nombre" selected="true" >
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </RadioButton>
+
+            <RadioButton fx:id="radioCodigo" text="Código">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </RadioButton>
+
+            <HBox fx:id="panelHueco" prefHeight="100.0" prefWidth="50.0" />
             <Label fx:id="lblCombo" prefHeight="16.0" prefWidth="153.0" text="%lblCombo" />
             <ComboBox fx:id="comboBoxDatos" prefWidth="150.0">
                <tooltip>
@@ -97,6 +111,7 @@
             <Insets bottom="10.0" left="20.0" />
          </VBox.margin>
       </HBox>
+
       <TableView fx:id="tablaVista" visible="true">
          <VBox.margin>
             <Insets />
