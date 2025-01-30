@@ -584,6 +584,8 @@ public class BibliotecaController {
                         alerta(new ArrayList<>(Arrays.asList( resources.getString("no.delete.olympic"))));
                     }
 
+                }else{
+
                 }
             }
         } else {
