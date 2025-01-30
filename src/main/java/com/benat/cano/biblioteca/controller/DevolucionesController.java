@@ -45,12 +45,6 @@ public class DevolucionesController implements Initializable {
     private TextField txtFechaDev;
     private ResourceBundle resources;
 
-    /**
-     * Constructor vacío para la creación de un nuevo alumno.
-     */
-    public DevolucionesController() {
-        this.p = null;
-    }
 
     /**
      * Constructor para la edición de un alumno existente.
@@ -92,6 +86,7 @@ public class DevolucionesController implements Initializable {
         ArrayList<String> errores = new ArrayList<>();
         hp.getLibro().setEstado(cmbEstado.getValue());
         if(DaoHistoricoPrestamo.insertar(hp)) {
+            DaoPrestamo.eliminar(p);
             confirmacion(resources.getString("save.participation"));
             closeWindow();
         }else {
