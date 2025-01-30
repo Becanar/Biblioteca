@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub_prestamos" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86634991-cee4-4f16-8cfb-f7e1f4c17393">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="libros"/>
+	<parameter name="codigo" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT dni_alumno,fecha_prestamo,fecha_devolucion FROM libros.Historico_prestamo WHERE codigo_libro = $P{codigo};]]>
+	</queryString>
+	<field name="dni_alumno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dni_alumno"/>
+		<property name="com.jaspersoft.studio.field.label" value="dni_alumno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Historico_prestamo"/>
+	</field>
+	<field name="fecha_prestamo" class="java.time.LocalDateTime">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_prestamo"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_prestamo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Historico_prestamo"/>
+	</field>
+	<field name="fecha_devolucion" class="java.time.LocalDateTime">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_devolucion"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_devolucion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Historico_prestamo"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="420" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="a5251782-6ee2-47ac-9686-42f11e71395f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8e296e05-e1de-4ebe-8131-5c0eb986cb22"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESTAMOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="0" width="110" height="20" uuid="a0604543-e440-463e-9309-d10b88590cfc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8e296e05-e1de-4ebe-8131-5c0eb986cb22"/>
+				</reportElement>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dni_alumno}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="270" y="0" width="150" height="20" uuid="f46f2723-9a0c-4b93-b22e-0bdc76debdb3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8e296e05-e1de-4ebe-8131-5c0eb986cb22"/>
+				</reportElement>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_devolucion}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="110" y="0" width="160" height="20" uuid="2e2957ed-7688-4834-baaa-d3bac854f505">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8e296e05-e1de-4ebe-8131-5c0eb986cb22"/>
+				</reportElement>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_prestamo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="20" width="420" height="1" forecolor="#666666" uuid="cb5ca1c3-6167-4678-b0c7-49dc688b3306">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="5.0"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

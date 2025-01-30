@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="libros" pageWidth="825" pageHeight="842" columnWidth="785" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d0eac605-bb5b-4118-ba93-b520c54270ca">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="libros"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<parameter name="IMAGE_PATH" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select * from Libro]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<field name="titulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="titulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="titulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<field name="autor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="autor"/>
+		<property name="com.jaspersoft.studio.field.label" value="autor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<field name="editorial" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="editorial"/>
+		<property name="com.jaspersoft.studio.field.label" value="editorial"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<field name="portada" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="portada"/>
+		<property name="com.jaspersoft.studio.field.label" value="portada"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<image>
+				<reportElement x="180" y="-2" width="90" height="84" uuid="b9ff45b5-0412-4015-b0f8-4dfc27bf98ed"/>
+				<imageExpression><![CDATA[$P{IMAGE_PATH}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="280" y="0" width="263" height="62" uuid="ff798acd-a922-4e54-bf39-ec44739ef7c5"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="50" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BiblioRead]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="60" width="196" height="22" forecolor="#736343" uuid="ec849936-01c3-44f2-80e2-af375155c89f"/>
+				<textElement>
+					<font fontName="Times New Roman" size="18"/>
+				</textElement>
+				<text><![CDATA[LIBROS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="249" splitType="Stretch">
+			<subreport>
+				<reportElement x="380" y="30" width="200" height="200" uuid="374d326c-4f3b-4fa4-9643-dc976dff616b"/>
+				<subreportParameter name="codigo">
+					<subreportParameterExpression><![CDATA[$F{codigo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["Sub_prestamos.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="30" y="50" width="90" height="30" uuid="e3074eb0-6c2b-4835-b04d-630ca6e2ba9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Titulo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="80" width="90" height="30" uuid="004345f1-62c2-4bea-9a58-76b3e02e219b">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Autor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="109" width="90" height="30" uuid="bebeb9fd-ab8f-4d23-88bd-d778d6e3e309">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Editor:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="240" width="779" height="1" forecolor="#666666" uuid="f9f71b0d-fe5a-44c0-b7b6-51ed291382f3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="5.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="120" y="50" width="199" height="30" uuid="1c73cb0d-d3bb-4084-9678-9a2a33eb9dd0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="80" width="199" height="30" uuid="0d7d8452-dbfe-4c6c-9286-37ff06059cb3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{autor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="109" width="199" height="30" uuid="19357251-a976-4a0a-a72b-23582c8bf095"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{editorial}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="150" y="150" width="120" height="80" uuid="c87d3fd1-f06e-4399-a8b8-30b569b250a9"/>
+				<imageExpression><![CDATA[$F{portada}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="801" height="24" forecolor="#D0B48E" backcolor="#F2EBDF" uuid="d073e468-3548-4d0a-9fa4-55f25c714ea4"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="533" y="0" width="40" height="20" forecolor="#736343" uuid="9643361f-a881-41d3-957c-aab8d58a5e1c"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="453" y="0" width="80" height="20" forecolor="#736343" uuid="4f558775-3bbb-443f-9e76-f19d3032e30f"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="22" y="1" width="197" height="20" forecolor="#736343" uuid="856bf80f-d266-4ef6-b074-5af718be18a7"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+</jasperReport>
