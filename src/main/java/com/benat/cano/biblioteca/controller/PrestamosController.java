@@ -34,11 +34,7 @@ public class PrestamosController implements Initializable {
     @FXML
     private TextField txtFecha;
 
-    @FXML
-    void cancelar(ActionEvent event) {
-        Stage stage = (Stage) txtFecha.getScene().getWindow();
-        stage.close();
-    }
+
 
 
     private ResourceBundle resources;
@@ -138,7 +134,11 @@ public class PrestamosController implements Initializable {
         alerta.setContentText(texto);
         alerta.showAndWait();
     }
-
+    @FXML
+    void cancelar(ActionEvent event) {
+        Stage stage = (Stage) txtFecha.getScene().getWindow();
+        stage.close();
+    }
     // Close the window
     private void closeWindow() {
         Stage stage = (Stage) txtFecha.getScene().getWindow();
