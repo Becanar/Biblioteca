@@ -589,6 +589,7 @@ public class BibliotecaController {
                     }
 
                 }else{
+                    if (item.equals(resources.getString("borrows"))) {
                     Prestamo prestamo = (Prestamo) seleccion;
                     try {
                         Window ventana = tablaVista.getScene().getWindow();
@@ -612,11 +613,11 @@ public class BibliotecaController {
                         stage.initOwner(ventana);
                         stage.initModality(Modality.APPLICATION_MODAL);
                         stage.showAndWait();
-                        cargarLibros();
+                        cargarPrestamos();
                     } catch (IOException e) {
                         System.err.println(e.getMessage());
                         alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
-                    }
+                    }}
 
                 }
             }

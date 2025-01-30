@@ -53,11 +53,12 @@ public class DevolucionesController implements Initializable {
      */
     public DevolucionesController(Prestamo libro) {
         this.p = libro;
+        hp=new HistoricoPrestamos();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        this.resources = resourceBundle;
         lstAlumno.getItems().add(p.getAlumno());
         lstLibro.getItems().add(p.getLibro());
         txtFecha.setText(p.getFecha_prestamo().toString());
