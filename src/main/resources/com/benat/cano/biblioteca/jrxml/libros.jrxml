@@ -5,6 +5,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="libros"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<parameter name="IMAGE_PATH" class="java.lang.String"/>
+	<parameter name="SUBINF" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select * from Libro]]>
 	</queryString>
@@ -68,12 +69,12 @@
 	<detail>
 		<band height="249" splitType="Stretch">
 			<subreport>
-				<reportElement x="380" y="30" width="200" height="200" uuid="374d326c-4f3b-4fa4-9643-dc976dff616b"/>
+				<reportElement x="350" y="30" width="200" height="200" uuid="374d326c-4f3b-4fa4-9643-dc976dff616b"/>
 				<subreportParameter name="codigo">
 					<subreportParameterExpression><![CDATA[$F{codigo}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["Sub_prestamos.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBINF}]]></subreportExpression>
 			</subreport>
 			<staticText>
 				<reportElement x="30" y="50" width="90" height="30" uuid="e3074eb0-6c2b-4835-b04d-630ca6e2ba9f"/>

@@ -5,6 +5,7 @@ import com.benat.cano.biblioteca.dao.DaoAlumno;
 import com.benat.cano.biblioteca.dao.DaoHistoricoPrestamo;
 import com.benat.cano.biblioteca.dao.DaoLibro;
 import com.benat.cano.biblioteca.dao.DaoPrestamo;
+import com.benat.cano.biblioteca.db.ConectorDB;
 import com.benat.cano.biblioteca.model.*;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,11 +26,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -862,6 +868,26 @@ public class BibliotecaController {
     }
 
     public void generarReporte1(ActionEvent actionEvent) {
+
+        ConectorDB connection;
+        try {
+            connection = new ConectorDB();
+            HashMap<String, Object> parameters = new HashMap<>();
+            String imagePath1 = getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString();
+            parameters.put("IMAGE_PATH", imagePath1);
+            String subinf = getClass().getResource("/com/benat/cano/biblioteca/jasper/Sub_prestamos.jasper").toString();
+            parameters.put("SUBINF", subinf);
+            JasperReport report = (JasperReport) JRLoader.loadObject(getClass().getResource("/com/benat/cano/biblioteca/jasper/libros.jasper")); // Obtener el fichero del informe
+            JasperPrint jprint = JasperFillManager.fillReport(report, parameters, connection.getConnection()); // Cargar el informe
+            JasperViewer viewer = new JasperViewer(jprint, false); // Instanciar la vista del informe para mostrar el informe
+            viewer.setVisible(true);
+        } catch (JRException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void generarReporte2(ActionEvent actionEvent) {
