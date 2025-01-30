@@ -6,10 +6,13 @@ import com.benat.cano.biblioteca.model.Alumno;
 import com.benat.cano.biblioteca.model.HistoricoPrestamos;
 import com.benat.cano.biblioteca.model.Libro;
 import com.benat.cano.biblioteca.model.Prestamo; // Asumimos que tienes una clase Prestamo
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -28,10 +31,12 @@ public class DevolucionesController implements Initializable {
     private HistoricoPrestamos hp;
     @FXML
     private ListView<Alumno> lstAlumno;
-    Nuevo, Usado nuevo, Usado seminuevo, Usado estropeado, Restaurado.
 
     @FXML
     private ListView<Libro> lstLibro;
+
+    @FXML
+    private ComboBox<String> cmbEstado;
 
     @FXML
     private TextField txtFecha;
@@ -71,6 +76,9 @@ public class DevolucionesController implements Initializable {
         hp.setLibro(p.getLibro());
         hp.setFecha_prestamo(p.getFecha_prestamo());
         hp.setFecha_devolucion(fecha);
+
+        cargarDatosComboBox();
+        cmbEstado.setValue(p.getLibro().getEstado());
     }
 
     @FXML
@@ -82,13 +90,19 @@ public class DevolucionesController implements Initializable {
     @FXML
     void guardar(ActionEvent event) {
         ArrayList<String> errores = new ArrayList<>();
+        hp.getLibro().setEstado(cmbEstado.getValue());
         if(DaoHistoricoPrestamo.insertar(hp)) {
             confirmacion(resources.getString("save.participation"));
             closeWindow();
         }else {
         errores.add(resources.getString("save.fail"));}
     }
-
+    private void cargarDatosComboBox() {
+        ObservableList<String> opciones = FXCollections.observableArrayList(
+                resources.getString("students"), resources.getString("borrows"), resources.getString("books"),resources.getString("historico")
+        );
+        cmbEstado.setItems(opciones);
+    }
     // Show alert with multiple error messages
     public void alerta(ArrayList<String> mensajes) {
         StringBuilder texto = new StringBuilder();
