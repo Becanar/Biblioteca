@@ -34,7 +34,7 @@
                         <Insets bottom="5.0" />
                      </padding>
                   </Label>
-                  <ListView fx:id="lstDeportista" />
+                  <ListView fx:id="lstAlumno" />
                </children>
             </VBox>
             <VBox prefHeight="200.0" />
@@ -45,7 +45,7 @@
                         <Insets bottom="5.0" />
                      </padding>
                   </Label>
-                  <ListView fx:id="lstEquipo" />
+                  <ListView fx:id="lstLibro" />
                </children>
             </VBox>
          </children>
@@ -58,7 +58,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="290.0">
                <children>
                   <Label text="%presFecha" />
-                  <TextField fx:id="txtEdad" HBox.hgrow="SOMETIMES">
+                  <TextField fx:id="txtFecha" HBox.hgrow="SOMETIMES">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>

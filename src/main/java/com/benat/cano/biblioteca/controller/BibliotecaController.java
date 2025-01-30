@@ -119,7 +119,6 @@ public class BibliotecaController {
         MenuItem editItem = new MenuItem(resources.getString("edit"));
         editItem.setOnAction(event -> editar(null));
 
-
         MenuItem deleteItem = new MenuItem(resources.getString("delete"));
         deleteItem.setOnAction(event -> borrar(null));
 
@@ -139,6 +138,48 @@ public class BibliotecaController {
         radioOtro.setToggleGroup(grupoBusqueda);
         radioNombre.setSelected(true);
     }
+    private void actualizarMenuContextual(String vista) {
+        if (vista.equals("historico")) {
+            tablaVista.setContextMenu(null); // Elimina el menú contextual
+            return;
+        }
+        ContextMenu contextMenu = new ContextMenu();
+
+        switch (vista) {
+            case "prestamos":
+                MenuItem devolverItem = new MenuItem(resources.getString("students"));
+                devolverItem.setOnAction(event -> borrar(null));
+                contextMenu.getItems().add(devolverItem);
+                break;
+
+            case "student":
+                MenuItem editItem = new MenuItem(resources.getString("edit"));
+                editItem.setOnAction(event -> editar(null));
+
+                MenuItem deleteItem = new MenuItem(resources.getString("delete"));
+                deleteItem.setOnAction(event -> borrar(null));
+
+                contextMenu.getItems().addAll(editItem, deleteItem);
+                break;
+
+            case "book":
+                MenuItem editBookItem = new MenuItem(resources.getString("edit"));
+                editBookItem.setOnAction(event -> editar(null));
+
+                MenuItem bajaItem = new MenuItem(resources.getString("students"));
+                bajaItem.setOnAction(event -> borrar(null));
+
+                contextMenu.getItems().addAll(editBookItem, bajaItem);
+                break;
+
+
+            default:
+                return;
+        }
+
+        tablaVista.setContextMenu(contextMenu);
+    }
+
 
     /**
      * Filtra las entidades mostradas en la tabla según el texto ingresado en el campo de búsqueda.
@@ -228,26 +269,30 @@ public class BibliotecaController {
         String seleccion = comboBoxDatos.getValue();
 
         // Limpiar la tabla antes de actualizarla
-        tablaVista.getItems().clear();
+
         tablaVista.getColumns().clear(); // Limpiar columnas antes de configurar nuevas
 
         // Usar if-else para comparar las opciones seleccionadas
         if (alumnos.equals(seleccion)) {
             cargarAlumnos();
+            actualizarMenuContextual("student");
             radioNombre.setText("Nombre");
             radioCodigo.setText("DNI");
             radioOtro.setText("Apellido1");
         } else if (libros.equals(seleccion)) {
             cargarLibros();
+            actualizarMenuContextual("book");
             radioNombre.setText("Titulo");
             radioCodigo.setText("Código");
             radioOtro.setText("Autor");
         } else if (prestamos.equals(seleccion)) {
+            actualizarMenuContextual("prestamos");
             radioNombre.setText("DNI Alumno");
             radioCodigo.setText("Código libro");
             radioOtro.setText("Fecha");
             cargarPrestamos();
         } else if (historicos.equals(seleccion)) {
+            actualizarMenuContextual("historico");
             radioNombre.setText("DNI Alumno");
             radioCodigo.setText("Código libro");
             radioOtro.setText("Fecha Devolucion");
