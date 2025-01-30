@@ -14,6 +14,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 import java.net.URL;
 import java.time.DateTimeException;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class PrestamosController implements Initializable {
@@ -85,6 +89,7 @@ public class PrestamosController implements Initializable {
 
             if (DaoPrestamo.insertar(nuevo) != -1) {
                 confirmacion(resources.getString("save.borrow"));
+                generarInforme(nuevo);
                 closeWindow();
             } else {
                 errores.add(resources.getString("save.fail"));
@@ -92,6 +97,37 @@ public class PrestamosController implements Initializable {
         }
         if (!errores.isEmpty()) {
             alerta(errores);
+        }
+    }
+
+    void generarInforme(Prestamo p) {
+        HashMap<String, Object> parameters = new HashMap<>();
+        String imagePath1 = getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString();
+        parameters.put("IMAGE_PATH", imagePath1);
+        parameters.put("nombre", p.getAlumno().getNombre());
+        parameters.put("apellidos", p.getAlumno().getApellido1() + " " + p.getAlumno().getApellido2());
+        parameters.put("dni", p.getAlumno().getDni());
+        parameters.put("titulo", p.getLibro().getTitulo());
+        parameters.put("codigo", p.getLibro().getCodigo());
+        parameters.put("autor", p.getLibro().getAutor());
+        parameters.put("editorial", p.getLibro().getEditorial());
+        parameters.put("estado", p.getLibro().getEstado());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+
+// Formatea las fechas antes de pasarlas a los parámetros
+        String fechaPrestamoFormateada = p.getFecha_prestamo().format(formatter);
+        String fechaLimiteFormateada = p.getFecha_prestamo().plusDays(15).format(formatter);
+
+// Ahora puedes pasar las fechas formateadas como parámetros al reporte
+        parameters.put("fecha", fechaPrestamoFormateada);
+        parameters.put("fecha_limite", fechaLimiteFormateada);
+        try {
+            JasperReport report = (JasperReport) JRLoader.loadObject(getClass().getResource("/com/benat/cano/biblioteca/jasper/prestamo.jasper")); // Obtener el fichero del informe
+            JasperPrint jprint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource()); // Cargar el informe
+            JasperViewer viewer = new JasperViewer(jprint, false); // Instanciar la vista del informe para mostrar el informe
+            viewer.setVisible(true); // Mostrar el informe al usuario
+        } catch (JRException e) {
+            e.printStackTrace();
         }
     }
 

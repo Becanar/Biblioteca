@@ -2,6 +2,7 @@ module com.benat.cano.biblioteca {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires jasperreports;
 
 
     opens com.benat.cano.biblioteca.model to javafx.fxml;
