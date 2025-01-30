@@ -84,7 +84,7 @@ public class PrestamosController implements Initializable {
             nuevo.setFecha_prestamo(LocalDateTime.parse(txtFecha.getText(), formatter));
 
             if (DaoPrestamo.insertar(nuevo) != -1) {
-                confirmacion(resources.getString("save.participation"));
+                confirmacion(resources.getString("save.borrow"));
                 closeWindow();
             } else {
                 errores.add(resources.getString("save.fail"));
@@ -100,13 +100,13 @@ public class PrestamosController implements Initializable {
         StringBuilder error = new StringBuilder();
 
         if (lstAlumno.getSelectionModel().getSelectedItem() == null) {
-            error.append(resources.getString("validate.participation.athlete")).append("\n");
+            error.append(resources.getString("validate.borrow.students")).append("\n");
         }
         if (lstLibro.getSelectionModel().getSelectedItem() == null) {
-            error.append(resources.getString("validate.participation.evento")).append("\n");
+            error.append(resources.getString("validate.borrow.books")).append("\n");
         }
         if (txtFecha.getText().isEmpty()) {
-            error.append(resources.getString("validate.participation.age")).append("\n");
+            error.append(resources.getString("validate.borrow.date")).append("\n");
         }
 
         return error.toString();

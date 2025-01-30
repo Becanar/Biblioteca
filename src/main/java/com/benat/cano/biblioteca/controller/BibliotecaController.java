@@ -146,8 +146,8 @@ public class BibliotecaController {
         ContextMenu contextMenu = new ContextMenu();
 
         switch (vista) {
-            case "prestamos":
-                MenuItem devolverItem = new MenuItem(resources.getString("students"));
+            case "borrows":
+                MenuItem devolverItem = new MenuItem(resources.getString("devolution"));
                 devolverItem.setOnAction(event -> borrar(null));
                 contextMenu.getItems().add(devolverItem);
                 break;
@@ -166,7 +166,7 @@ public class BibliotecaController {
                 MenuItem editBookItem = new MenuItem(resources.getString("edit"));
                 editBookItem.setOnAction(event -> editar(null));
 
-                MenuItem bajaItem = new MenuItem(resources.getString("students"));
+                MenuItem bajaItem = new MenuItem(resources.getString("low"));
                 bajaItem.setOnAction(event -> borrar(null));
 
                 contextMenu.getItems().addAll(editBookItem, bajaItem);
@@ -276,29 +276,29 @@ public class BibliotecaController {
         if (alumnos.equals(seleccion)) {
             cargarAlumnos();
             actualizarMenuContextual("student");
-            radioNombre.setText("Nombre");
-            radioCodigo.setText("DNI");
-            radioOtro.setText("Apellido1");
+            radioNombre.setText(resources.getString("name"));
+            radioCodigo.setText(resources.getString("dni"));
+            radioOtro.setText(resources.getString("surname1"));
             btAniadir.setVisible(true);
         } else if (libros.equals(seleccion)) {
             cargarLibros();
             actualizarMenuContextual("book");
-            radioNombre.setText("Titulo");
-            radioCodigo.setText("Código");
-            radioOtro.setText("Autor");
+            radioNombre.setText(resources.getString("title"));
+            radioCodigo.setText(resources.getString("code"));
+            radioOtro.setText(resources.getString("books.author"));
             btAniadir.setVisible(true);
         } else if (prestamos.equals(seleccion)) {
-            actualizarMenuContextual("prestamos");
-            radioNombre.setText("DNI Alumno");
-            radioCodigo.setText("Código libro");
-            radioOtro.setText("Fecha");
+            actualizarMenuContextual("borrows");
+            radioNombre.setText(resources.getString("dni"));
+            radioCodigo.setText(resources.getString("code"));
+            radioOtro.setText(resources.getString("presFecha"));
             btAniadir.setVisible(true);
             cargarPrestamos();
         } else if (historicos.equals(seleccion)) {
             actualizarMenuContextual("historico");
-            radioNombre.setText("DNI Alumno");
-            radioCodigo.setText("Código libro");
-            radioOtro.setText("Fecha Devolucion");
+            radioNombre.setText(resources.getString("dni"));
+            radioCodigo.setText(resources.getString("code"));
+            radioOtro.setText(resources.getString("presFechaDev"));
             btAniadir.setVisible(false);
             cargarHistorico();
         }
@@ -322,23 +322,23 @@ public class BibliotecaController {
         colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId_prestamo()).asObject());
 
         // Columna de Alumno
-        TableColumn<HistoricoPrestamos, String> colAlumno = new TableColumn<>("DNI Alumno");
+        TableColumn<HistoricoPrestamos, String> colAlumno = new TableColumn<>(resources.getString("dni"));
         colAlumno.setCellValueFactory(cellData -> {
             Alumno alumno = cellData.getValue().getAlumno();
             return alumno != null ? new SimpleStringProperty(alumno.getDni()) : new SimpleStringProperty("");
         });
 
         // Columna de Libro
-        TableColumn<HistoricoPrestamos, Integer> colLibro = new TableColumn<>("Código Libro");
+        TableColumn<HistoricoPrestamos, Integer> colLibro = new TableColumn<>(resources.getString("code"));
         colLibro.setCellValueFactory(cellData -> {
             Libro libro = cellData.getValue().getLibro();
             return libro != null ? new SimpleIntegerProperty(libro.getCodigo()).asObject() : new SimpleIntegerProperty(0).asObject();
         });
 
         // Columna de Fecha de Préstamo
-        TableColumn<HistoricoPrestamos, String> colFecha = new TableColumn<>("Fecha de Préstamo");
+        TableColumn<HistoricoPrestamos, String> colFecha = new TableColumn<>(resources.getString("presFecha"));
         colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_prestamo().toString()));
-        TableColumn<HistoricoPrestamos, String> colFecha2 = new TableColumn<>("Fecha de Devolución");
+        TableColumn<HistoricoPrestamos, String> colFecha2 = new TableColumn<>(resources.getString("presFechaDev"));
         colFecha2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha_devolucion().toString()));
 
         tablaVista.getColumns().clear();

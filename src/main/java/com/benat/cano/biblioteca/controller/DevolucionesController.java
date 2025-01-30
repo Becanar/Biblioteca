@@ -88,14 +88,14 @@ public class DevolucionesController implements Initializable {
         hp.getLibro().setEstado(cmbEstado.getValue());
         if(DaoHistoricoPrestamo.insertar(hp)) {
             DaoPrestamo.eliminar(p);
-            confirmacion(resources.getString("save.participation"));
+            confirmacion(resources.getString("save.devolution"));
             closeWindow();
         }else {
         errores.add(resources.getString("save.fail"));}
     }
     private void cargarDatosComboBox() {
         ObservableList<String> opciones = FXCollections.observableArrayList(
-                resources.getString("students"), resources.getString("borrows"), resources.getString("books"),resources.getString("historico")
+                resources.getString("new"), resources.getString("new.used"), resources.getString("used.semi"),resources.getString("used"),resources.getString("restaured")
         );
         cmbEstado.setItems(opciones);
     }

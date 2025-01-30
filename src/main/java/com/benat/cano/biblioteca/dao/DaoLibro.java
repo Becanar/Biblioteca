@@ -145,25 +145,13 @@ public class DaoLibro {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int cont = rs.getInt("cont");
-                if (cont != 0) {
-                    rs.close();
-                    connection.closeConexion();
-                    return false;
-                }
-            }
-            rs.close();
-            ps.close();
-            consulta = "SELECT count(*) as cont FROM Historico_prestamo WHERE codigo_libro = ?";
-            ps = connection.getConnection().prepareStatement(consulta);
-            ps.setInt(1, libro.getCodigo());
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                int cont = rs.getInt("cont");
                 rs.close();
+                ps.close();
                 connection.closeConexion();
                 return (cont == 0);
             }
             rs.close();
+            ps.close();
             connection.closeConexion();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -198,7 +186,6 @@ public class DaoLibro {
             throw new RuntimeException(e);
         }
     }
-
     public static boolean darDeBaja(Libro libro) {
         ConectorDB connection;
         PreparedStatement ps;
@@ -253,23 +240,4 @@ public class DaoLibro {
         }
     }
 
-    public static boolean eliminar(Libro libro) {
-        ConectorDB connection;
-        PreparedStatement ps;
-        try {
-            connection = new ConectorDB();
-            String consulta = "DELETE FROM Libro WHERE codigo = ?";
-            ps = connection.getConnection().prepareStatement(consulta);
-            ps.setInt(1, libro.getCodigo());
-            int filasAfectadas = ps.executeUpdate();
-            ps.close();
-            connection.closeConexion();
-            return filasAfectadas > 0;
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            return false;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

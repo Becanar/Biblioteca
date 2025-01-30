@@ -29,7 +29,7 @@
          <children>
             <VBox prefHeight="200.0">
                <children>
-                  <Label text="%presAlum">
+                  <Label text="%student">
                      <padding>
                         <Insets bottom="5.0" />
                      </padding>
@@ -40,7 +40,7 @@
             <VBox prefHeight="200.0" />
             <VBox prefHeight="200.0">
                <children>
-                  <Label text="%presLibro">
+                  <Label text="%book">
                      <padding>
                         <Insets bottom="5.0" />
                      </padding>

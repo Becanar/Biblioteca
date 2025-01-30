@@ -141,7 +141,7 @@ public class LibrosController implements Initializable {
             Libro libroExistente = DaoLibro.getLibroPorTituloYAutor(nuevo.getTitulo(), nuevo.getAutor());
             if (libroExistente != null) {
                 ArrayList<String> failMessages = new ArrayList<>();
-                failMessages.add("Ya existe un libro con este título y autor.");
+                failMessages.add(resources.getString("duplicate.book"));
                 alerta(failMessages);
                 return; // Evitar que se inserte
             }
@@ -156,10 +156,10 @@ public class LibrosController implements Initializable {
                     Blob defaultBlob = DaoLibro.convertFileToBlob(imagenDefault);
                     nuevo.setPortada(defaultBlob);
                 } else {
-                    System.err.println("Imagen predeterminada no encontrada.");
+                    errores.add(resources.getString("error.img"));
                 }
             } catch (Exception e) {
-                errores.add("Error al cargar la imagen predeterminada.");
+                errores.add(resources.getString("error.img"));
                 alerta(errores);
                 return;
             }
@@ -171,13 +171,13 @@ public class LibrosController implements Initializable {
         if (esEdicion) {
             if (DaoLibro.modificar(nuevo)) {
                 ArrayList<String> mensajes = new ArrayList<>();
-                mensajes.add("Libro actualizado correctamente.");
+                mensajes.add(resources.getString("update.book"));
                 confirmacion(mensajes);
                 Stage stage = (Stage) txtTitulo.getScene().getWindow();
                 stage.close();
             } else {
                 ArrayList<String> mensajes = new ArrayList<>();
-                mensajes.add("Error al actualizar el libro.");
+                mensajes.add(resources.getString("save.fail"));
                 alerta(mensajes);
             }
         } else {
@@ -185,11 +185,11 @@ public class LibrosController implements Initializable {
             int id = DaoLibro.insertar(nuevo);
             if (id == -1) {
                 ArrayList<String> mensajes = new ArrayList<>();
-                mensajes.add("Error al guardar el libro.");
+                mensajes.add(resources.getString("save.fail"));
                 alerta(mensajes);
             } else {
                 ArrayList<String> mensajes = new ArrayList<>();
-                mensajes.add("Libro guardado correctamente.");
+                mensajes.add(resources.getString("save.book"));
                 confirmacion(mensajes);
                 Stage stage = (Stage) txtTitulo.getScene().getWindow();
                 stage.close();
@@ -203,7 +203,7 @@ public class LibrosController implements Initializable {
     @FXML
     void seleccionImagen(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(resources.getString("athlete.photo.chooser"));
+        fileChooser.setTitle(resources.getString("book.photo.chooser"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.jpeg", "*.png"));
         fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showOpenDialog(null);
@@ -211,7 +211,7 @@ public class LibrosController implements Initializable {
             double kbs = (double) file.length() / 1024;
             if (kbs > 64) {
                 ArrayList<String> failMessages = new ArrayList<>();
-                failMessages.add(resources.getString("athlete.photo.chooser.size"));
+                failMessages.add(resources.getString("book.photo.chooser.size"));
                 alerta(failMessages);
             } else {
                 InputStream imagen = new FileInputStream(file);
@@ -221,10 +221,12 @@ public class LibrosController implements Initializable {
                 btnFotoBorrar.setDisable(false);
             }
         } catch (IOException | NullPointerException e) {
-            System.out.println("Imagen no seleccionada");
+            ArrayList<String> failMessages = new ArrayList<>();
+            failMessages.add(resources.getString("save.fail"));
+            alerta(failMessages);
         } catch (SQLException e) {
             ArrayList<String> failMessages = new ArrayList<>();
-            failMessages.add(resources.getString("athlete.photo.chooser.fail"));
+            failMessages.add(resources.getString("book.photo.chooser.fail"));
             alerta(failMessages);
         }
     }
@@ -236,16 +238,16 @@ public class LibrosController implements Initializable {
         ArrayList<String> errores = new ArrayList<>();
 
         if (txtTitulo.getText().isEmpty()) {
-            errores.add("El título del libro es obligatorio.");
+            errores.add(resources.getString("validate.book.name"));
         }
         if (txtAutor.getText().isEmpty()) {
-            errores.add("El autor del libro es obligatorio.");
+            errores.add(resources.getString("validate.book.id"));
         }
         if (txtEditorial.getText().isEmpty()) {
-            errores.add("El código del libro es obligatorio.");
+            errores.add(resources.getString("validate.book.editorial"));
         }
         if (txtEstado.getText().isEmpty()) {
-            errores.add("El número de páginas es obligatorio.");
+            errores.add(resources.getString("validate.book.estate"));
         }
         return errores;
     }
@@ -257,7 +259,7 @@ public class LibrosController implements Initializable {
         String contenido = String.join("\n", mensajes);
         Alert alerta = new Alert(Alert.AlertType.ERROR);
         alerta.setHeaderText(null);
-        alerta.setTitle("Error");
+        alerta.setTitle(resources.getString("error"));
         alerta.setContentText(contenido);
         alerta.showAndWait();
     }
@@ -269,7 +271,7 @@ public class LibrosController implements Initializable {
         String contenido = String.join("\n", mensajes);
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setHeaderText(null);
-        alerta.setTitle("Información");
+        alerta.setTitle(resources.getString("info"));
         alerta.setContentText(contenido);
         alerta.showAndWait();
     }
