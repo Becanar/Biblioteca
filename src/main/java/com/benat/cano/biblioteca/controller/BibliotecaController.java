@@ -891,6 +891,31 @@ public class BibliotecaController {
     }
 
     public void generarReporte2(ActionEvent actionEvent) {
+
+        ConectorDB connection;
+        try {
+            connection = new ConectorDB();
+            HashMap<String, Object> parameters = new HashMap<>();
+            String imagePath1 = getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString();
+            parameters.put("IMAGE_PATH", imagePath1);
+            String subinf = getClass().getResource("/com/benat/cano/biblioteca/jasper/datosLibros.jasper").toString();
+            parameters.put("SUBPATH", subinf);
+            String subinf2 = getClass().getResource("/com/benat/cano/biblioteca/jasper/editorial.jasper").toString();
+            parameters.put("SUBPATH2", subinf2);
+            String subinf3 = getClass().getResource("/com/benat/cano/biblioteca/jasper/estado.jasper").toString();
+            parameters.put("SUBPATH3", subinf3);
+
+            JasperReport report = (JasperReport) JRLoader.loadObject(getClass().getResource("/com/benat/cano/biblioteca/jasper/Graficos.jasper")); // Obtener el fichero del informe
+            JasperPrint jprint = JasperFillManager.fillReport(report, parameters, connection.getConnection()); // Cargar el informe
+            JasperViewer viewer = new JasperViewer(jprint, false); // Instanciar la vista del informe para mostrar el informe
+            viewer.setVisible(true);
+        } catch (JRException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void generarReporte3(ActionEvent actionEvent) {
