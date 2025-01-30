@@ -21,7 +21,10 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
+/**
+ * Controlador de la vista para gestionar los libros en la biblioteca.
+ * Permite crear, editar y gestionar la foto de portada de un libro.
+ */
 public class LibrosController implements Initializable {
     private Libro libro;
     private Blob imagen;
@@ -62,7 +65,13 @@ public class LibrosController implements Initializable {
     public LibrosController(Libro libro) {
         this.libro = libro;
     }
-
+    /**
+     * Método que se ejecuta al inicializar la vista del controlador.
+     * Si el libro no es nulo, se cargan los datos del libro para su edición.
+     *
+     * @param url La URL de la vista FXML.
+     * @param resourceBundle El ResourceBundle que contiene los textos traducidos.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.resources = resourceBundle;
@@ -110,7 +119,13 @@ public class LibrosController implements Initializable {
         Stage stage = (Stage) txtTitulo.getScene().getWindow();
         stage.close();
     }
-
+    /**
+     * Método que guarda los datos del libro.
+     * Si el libro es nuevo, lo inserta en la base de datos.
+     * Si el libro es editado, actualiza los datos existentes.
+     *
+     * @param event El evento generado al hacer clic en el botón de guardar.
+     */
     @FXML
     void guardar(ActionEvent event) {
         ArrayList<String> errores = validar();

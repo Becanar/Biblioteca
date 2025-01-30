@@ -11,9 +11,17 @@ import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+/**
+ * Clase DAO (Data Access Object) para gestionar las operaciones con la entidad Alumno en la base de datos.
+ * Contiene métodos para obtener, insertar, modificar, eliminar y consultar información sobre los alumnos.
+ */
 public class DaoAlumno {
-
+    /**
+     * Obtiene un alumno de la base de datos a partir de su DNI.
+     *
+     * @param dni el DNI del alumno a buscar
+     * @return un objeto Alumno con la información del alumno encontrado, o null si no se encuentra
+     */
 
     public static Alumno getAlumno(String dni) {
         ConectorDB connection;
@@ -40,7 +48,11 @@ public class DaoAlumno {
         }
         return alumno;
     }
-
+    /**
+     * Carga una lista de todos los alumnos registrados en la base de datos.
+     *
+     * @return una lista observable con los alumnos registrados
+     */
     public static ObservableList<Alumno> cargarListado() {
         ConectorDB connection;
         ObservableList<Alumno> alumnos = FXCollections.observableArrayList();
@@ -64,7 +76,13 @@ public class DaoAlumno {
         }
         return alumnos;
     }
-
+    /**
+     * Comprueba si un alumno es eliminable, lo cual depende de si ha realizado algún préstamo
+     * o si tiene registros en el historial de préstamos.
+     *
+     * @param alumno el objeto Alumno a verificar
+     * @return true si el alumno es eliminable (no tiene préstamos activos ni en el historial), false en caso contrario
+     */
     public static boolean esEliminable(Alumno alumno) {
         ConectorDB connection;
         try {
@@ -104,7 +122,12 @@ public class DaoAlumno {
         }
         return false;
     }
-
+    /**
+     * Modifica los datos de un alumno en la base de datos.
+     *
+     * @param alumno el objeto Alumno con los nuevos datos a guardar
+     * @return true si la actualización fue exitosa, false en caso contrario
+     */
     public static boolean modificar(Alumno alumno) {
             ConectorDB connection;
         PreparedStatement ps;
@@ -128,7 +151,12 @@ public class DaoAlumno {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Inserta un nuevo alumno en la base de datos.
+     *
+     * @param alumno el objeto Alumno a insertar
+     * @return true si la inserción fue exitosa, false en caso contrario
+     */
     public  static boolean insertar(Alumno alumno) {
         ConectorDB connection;
         PreparedStatement ps;
@@ -150,7 +178,12 @@ public class DaoAlumno {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Elimina un alumno de la base de datos.
+     *
+     * @param alumno el objeto Alumno a eliminar
+     * @return true si la eliminación fue exitosa, false en caso contrario
+     */
     public static boolean eliminar(Alumno alumno) {
         ConectorDB connection;
         PreparedStatement ps;

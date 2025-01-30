@@ -14,9 +14,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-
+/**
+ * Clase de acceso a los datos de los historiales de préstamos de libros en la biblioteca.
+ * Proporciona métodos para consultar y agregar registros en la tabla Historico_prestamo.
+ */
 public class DaoHistoricoPrestamo {
-
+    /**
+     * Carga el listado completo de los préstamos históricos.
+     *
+     * @return una lista observable de objetos {@link HistoricoPrestamos} que representan los registros históricos de los préstamos.
+     */
     public static ObservableList<HistoricoPrestamos> cargarListado() {
         ConectorDB connection;
         ObservableList<HistoricoPrestamos> prestamos = FXCollections.observableArrayList();
@@ -45,7 +52,12 @@ public class DaoHistoricoPrestamo {
         }
         return prestamos;
     }
-
+    /**
+     * Inserta un nuevo registro en el historial de préstamos.
+     *
+     * @param prestamo el objeto {@link HistoricoPrestamos} que se va a insertar en la base de datos.
+     * @return {@code true} si la inserción fue exitosa, {@code false} en caso contrario.
+     */
     public  static boolean insertar(HistoricoPrestamos prestamo) {
         ConectorDB connection;
         PreparedStatement ps;

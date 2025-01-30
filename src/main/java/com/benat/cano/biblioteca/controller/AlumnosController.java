@@ -12,7 +12,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
+/**
+ * Controlador de la vista para gestionar los alumnos de la biblioteca.
+ * Permite crear, editar, eliminar y validar los datos de un alumno.
+ */
 public class AlumnosController implements Initializable {
 
     private Alumno alumno; // El alumno que estamos editando o creando

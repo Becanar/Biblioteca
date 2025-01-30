@@ -12,8 +12,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Clase DAO (Data Access Object) encargada de gestionar las operaciones de acceso a datos
+ * relacionadas con los libros en la base de datos. Permite cargar, insertar, modificar,
+ * eliminar libros y realizar otras operaciones como convertir archivos a Blob.
+ */
 public class DaoLibro {
-
+    /**
+     * Obtiene un libro a partir de su código desde la base de datos.
+     *
+     * @param codigo El código del libro a buscar.
+     * @return Un objeto {@link Libro} que representa el libro encontrado, o {@code null} si no se encuentra.
+     */
     public static Libro getLibro(int codigo) {
         ConectorDB connection;
         Libro libro = null;
@@ -42,6 +52,13 @@ public class DaoLibro {
         }
         return libro;
     }
+    /**
+     * Obtiene un libro a partir de su título y autor desde la base de datos.
+     *
+     * @param tituloLibro El título del libro a buscar.
+     * @param autorLibro El autor del libro a buscar.
+     * @return Un objeto {@link Libro} que representa el libro encontrado, o {@code null} si no se encuentra.
+     */
     public static Libro getLibroPorTituloYAutor(String tituloLibro, String autorLibro) {
         ConectorDB connection;
         Libro libro = null;
@@ -75,7 +92,11 @@ public class DaoLibro {
         return libro;
     }
 
-
+    /**
+     * Carga la lista completa de libros desde la base de datos.
+     *
+     * @return Una lista observable de objetos {@link Libro} que representan los libros cargados desde la base de datos.
+     */
 
     public static ObservableList<Libro> cargarListado() {
         ConectorDB connection;
@@ -134,7 +155,12 @@ public class DaoLibro {
             return blob;
         }
     }
-
+    /**
+     * Verifica si un libro es eliminable, es decir, si no está relacionado con ningún préstamo en la base de datos.
+     *
+     * @param libro El objeto {@link Libro} a verificar.
+     * @return {@code true} si el libro puede ser eliminado, {@code false} si está relacionado con algún préstamo.
+     */
     public static boolean esEliminable(Libro libro) {
         ConectorDB connection;
         try {
@@ -160,7 +186,12 @@ public class DaoLibro {
         }
         return false;
     }
-
+    /**
+     * Modifica los detalles de un libro en la base de datos.
+     *
+     * @param libro El objeto {@link Libro} con los nuevos datos para actualizar.
+     * @return {@code true} si la modificación fue exitosa, {@code false} si ocurrió un error.
+     */
     public static boolean modificar(Libro libro) {
         ConectorDB connection;
         PreparedStatement ps;
@@ -186,6 +217,12 @@ public class DaoLibro {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * Marca un libro como dado de baja en la base de datos.
+     *
+     * @param libro El objeto {@link Libro} que se desea dar de baja.
+     * @return {@code true} si la operación fue exitosa, {@code false} en caso contrario.
+     */
     public static boolean darDeBaja(Libro libro) {
         ConectorDB connection;
         PreparedStatement ps;
@@ -205,7 +242,12 @@ public class DaoLibro {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Inserta un nuevo libro en la base de datos.
+     *
+     * @param libro El objeto {@link Libro} que contiene los detalles del libro a insertar.
+     * @return El código del libro insertado en la base de datos, o -1 si la inserción falló.
+     */
     public  static int insertar(Libro libro) {
         ConectorDB connection;
         PreparedStatement ps;

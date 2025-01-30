@@ -26,7 +26,10 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-
+/**
+ * Controlador para la gestión de préstamos de libros en la biblioteca.
+ * Permite realizar la creación de un nuevo préstamo, validar los datos y generar un informe en formato PDF.
+ */
 public class PrestamosController implements Initializable {
 
     @FXML
@@ -42,7 +45,13 @@ public class PrestamosController implements Initializable {
 
 
     private ResourceBundle resources;
-
+    /**
+     * Método que se ejecuta al inicializar el controlador. Carga las listas de alumnos y libros,
+     * y establece la fecha actual en el campo de fecha.
+     *
+     * @param url URL de la vista cargada.
+     * @param resourceBundle Recursos para la internacionalización.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.resources = resourceBundle;
@@ -55,7 +64,9 @@ public class PrestamosController implements Initializable {
         txtFecha.setText(LocalDateTime.now().format(formatter));
     }
 
-
+    /**
+     * Carga las listas de alumnos y libros disponibles en las vistas.
+     */
     public void cargarListas() {
         ObservableList<Alumno> alumno = DaoAlumno.cargarListado();
         lstAlumno.getItems().addAll(alumno);
@@ -65,7 +76,12 @@ public class PrestamosController implements Initializable {
         lstLibro.getItems().addAll(librosEliminables);
     }
 
-
+    /**
+     * Método que se ejecuta al guardar un préstamo. Realiza la validación de los campos y, si no hay errores,
+     * guarda el préstamo en la base de datos e imprime un informe con los detalles del préstamo.
+     *
+     * @param event Evento generado al hacer clic en el botón de guardar.
+     */
     @FXML
     void guardar(ActionEvent event) {
         ArrayList<String> errores = new ArrayList<>();
@@ -99,7 +115,11 @@ public class PrestamosController implements Initializable {
             alerta(errores);
         }
     }
-
+    /**
+     * Genera un informe en formato PDF para el préstamo realizado, usando JasperReports.
+     *
+     * @param p Objeto Prestamo con los datos del préstamo a reportar.
+     */
     void generarInforme(Prestamo p) {
         HashMap<String, Object> parameters = new HashMap<>();
         String imagePath1 = getClass().getResource("/com/benat/cano/biblioteca/images/logo.png").toString();
@@ -131,7 +151,11 @@ public class PrestamosController implements Initializable {
         }
     }
 
-
+    /**
+     * Valida los campos de entrada antes de realizar el préstamo.
+     *
+     * @return Un string con los errores encontrados, o una cadena vacía si no hay errores.
+     */
     public String validar() {
         StringBuilder error = new StringBuilder();
 
@@ -147,7 +171,11 @@ public class PrestamosController implements Initializable {
 
         return error.toString();
     }
-
+    /**
+     * Muestra una alerta con los mensajes de error.
+     *
+     * @param mensajes Lista de mensajes de error a mostrar en la alerta.
+     */
     // Show alert with multiple error messages
     public void alerta(ArrayList<String> mensajes) {
         StringBuilder texto = new StringBuilder();
@@ -162,7 +190,11 @@ public class PrestamosController implements Initializable {
         alerta.showAndWait();
     }
 
-    // Show confirmation message
+    /**
+     * Muestra una alerta de confirmación con un mensaje.
+     *
+     * @param texto El texto de la confirmación a mostrar.
+     */
     public void confirmacion(String texto) {
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setHeaderText(null);
@@ -170,12 +202,19 @@ public class PrestamosController implements Initializable {
         alerta.setContentText(texto);
         alerta.showAndWait();
     }
+    /**
+     * Cancela la operación de préstamo y cierra la ventana.
+     *
+     * @param event Evento generado al hacer clic en el botón de cancelar.
+     */
     @FXML
     void cancelar(ActionEvent event) {
         Stage stage = (Stage) txtFecha.getScene().getWindow();
         stage.close();
     }
-    // Close the window
+    /**
+     * Cierra la ventana actual del controlador.
+     */
     private void closeWindow() {
         Stage stage = (Stage) txtFecha.getScene().getWindow();
         stage.close();

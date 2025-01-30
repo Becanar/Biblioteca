@@ -25,7 +25,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
+/**
+ * Controlador para la funcionalidad de devoluciones de libros en la biblioteca.
+ * Permite gestionar la devolución de un libro por parte de un alumno, registrar los datos
+ * en el historial y actualizar el estado del libro.
+ */
 public class DevolucionesController implements Initializable {
     private Prestamo p;
     private HistoricoPrestamos hp;
@@ -55,7 +59,14 @@ public class DevolucionesController implements Initializable {
         this.p = libro;
         hp=new HistoricoPrestamos();
     }
-
+    /**
+     * Método que inicializa el controlador.
+     * Se llama automáticamente cuando se carga la vista FXML.
+     * Carga los datos iniciales del préstamo y configura los valores por defecto.
+     *
+     * @param url La URL de la vista FXML.
+     * @param resourceBundle El ResourceBundle que contiene los textos traducidos.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.resources = resourceBundle;
@@ -75,13 +86,23 @@ public class DevolucionesController implements Initializable {
         cargarDatosComboBox();
         cmbEstado.setValue(p.getLibro().getEstado());
     }
-
+    /**
+     * Método que se ejecuta cuando se cancela la acción de devolución.
+     * Cierra la ventana actual sin realizar cambios.
+     *
+     * @param event El evento generado al hacer clic en el botón de cancelar.
+     */
     @FXML
     void cancelar(ActionEvent event) {
         Stage stage = (Stage) txtFecha.getScene().getWindow();
         stage.close();
     }
-
+    /**
+     * Método que guarda los cambios realizados en la devolución del libro.
+     * Si la devolución es exitosa, se registra en el historial y se elimina el préstamo.
+     *
+     * @param event El evento generado al hacer clic en el botón de guardar.
+     */
     @FXML
     void guardar(ActionEvent event) {
         ArrayList<String> errores = new ArrayList<>();
@@ -93,12 +114,22 @@ public class DevolucionesController implements Initializable {
         }else {
         errores.add(resources.getString("save.fail"));}
     }
+    /**
+     * Método que carga los valores posibles para el ComboBox de estado del libro.
+     * Los valores son proporcionados por el archivo de recursos (i18n).
+     */
     private void cargarDatosComboBox() {
         ObservableList<String> opciones = FXCollections.observableArrayList(
                 resources.getString("new"), resources.getString("new.used"), resources.getString("used.semi"),resources.getString("used"),resources.getString("restaured")
         );
         cmbEstado.setItems(opciones);
     }
+
+    /**
+     * Muestra una alerta con los mensajes de error proporcionados.
+     *
+     * @param mensajes Lista de mensajes de error a mostrar en la alerta.
+     */
     // Show alert with multiple error messages
     public void alerta(ArrayList<String> mensajes) {
         StringBuilder texto = new StringBuilder();
@@ -113,7 +144,11 @@ public class DevolucionesController implements Initializable {
         alerta.showAndWait();
     }
 
-    // Show confirmation message
+    /**
+     * Muestra un mensaje de confirmación después de realizar una acción exitosa.
+     *
+     * @param texto El texto de confirmación que se mostrará en la alerta.
+     */
     public void confirmacion(String texto) {
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setHeaderText(null);
@@ -122,7 +157,10 @@ public class DevolucionesController implements Initializable {
         alerta.showAndWait();
     }
 
-    // Close the window
+
+    /**
+     * Cierra la ventana actual.
+     */
     private void closeWindow() {
         Stage stage = (Stage) txtFecha.getScene().getWindow();
         stage.close();
