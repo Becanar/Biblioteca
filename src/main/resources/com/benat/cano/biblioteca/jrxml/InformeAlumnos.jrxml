@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="proyectoInforme3" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="44b1c194-c289-4db3-9e4a-c131c4f27638">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="134"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="861"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ContraDockerExamen1"/>
+	<parameter name="IMAGE_PATH" class="java.lang.String"/>
+	<parameter name="SUBREPORT_PATH" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+    libros.`Libro`.codigo  AS libro_id, 
+    libros.`Libro`.titulo  AS titulo_libro,
+    COUNT( libros.`Historico_prestamo`.codigo_libro ) AS veces_prestado,
+    COUNT(DISTINCT libros.`Historico_prestamo`.dni_alumno ) AS alumnos_distintos
+FROM 
+    libros.`Libro` 
+LEFT JOIN 
+    libros.`Historico_prestamo`   ON  libros.`Libro`.codigo  =  libros.`Historico_prestamo`.codigo_libro 
+GROUP BY 
+    libros.`Libro`.codigo 
+ORDER BY 
+    veces_prestado DESC]]>
+	</queryString>
+	<field name="libro_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="libro_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<field name="titulo_libro" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="titulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="titulo_libro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="Libro"/>
+	</field>
+	<field name="veces_prestado" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="veces_prestado"/>
+		<property name="com.jaspersoft.studio.field.label" value="veces_prestado"/>
+	</field>
+	<field name="alumnos_distintos" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="alumnos_distintos"/>
+		<property name="com.jaspersoft.studio.field.label" value="alumnos_distintos"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="696" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="550" height="80" forecolor="#FFFFFF" backcolor="#FC1008" uuid="fd854ddc-e3f9-4cac-a368-60282b3e73f9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="40"/>
+				</textElement>
+				<text><![CDATA[GRAFICOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="124" y="110" width="310" height="80" forecolor="#FFFFFF" backcolor="#FC1008" uuid="fc8c725c-c33c-4503-b7e2-fbccb90e4e83"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="40"/>
+				</textElement>
+				<text><![CDATA[LibroVerso]]></text>
+			</staticText>
+			<image>
+				<reportElement x="42" y="110" width="80" height="80" uuid="a00fda56-4ad9-40a6-963a-de695bf51156"/>
+				<imageExpression><![CDATA[$P{IMAGE_PATH}+"logoBiblioteca.png"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="2" y="95" width="549" height="1" uuid="7bdf990d-739b-4146-bc2a-6386180b4114"/>
+			</line>
+			<line>
+				<reportElement x="2" y="205" width="549" height="1" uuid="f793fbbb-9bba-4cd2-ad5a-96005f1b03cd"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="220" width="550" height="30" forecolor="#FFFFFF" backcolor="#FC1008" uuid="5338555f-1088-4a07-97d1-d0fe305b6540"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Prestaciones de libro por libro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="5" y="450" width="550" height="30" forecolor="#FFFFFF" backcolor="#FC1008" uuid="511d3604-4afb-4930-9c71-35805e3ea60c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Estados de los libros]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="30" y="250" width="70" height="50" uuid="3f9b4645-5c64-4b65-8d02-47c4d9a0fa69"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_PATH}+"proyectoSubreporte3_1.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="20" y="490" width="71" height="53" uuid="43ac652f-3b0f-4ce1-a3c7-e71753c693e0"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_PATH}+"proyectoSubreporte3_2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="37" splitType="Stretch"/>
+	</pageHeader>
+	<pageFooter>
+		<band height="44" splitType="Stretch">
+			<textField pattern="EEEE, d &apos;de&apos; MMMM &apos;del&apos; yyyy">
+				<reportElement x="0" y="24" width="230" height="15" uuid="f0861610-0571-4e7e-9e66-1226e4c87313"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="10" width="100" height="30" uuid="9aea5cb3-e4ad-4a9b-a9d9-381cc3cb3999"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="470" y="10" width="79" height="30" uuid="4e6e7ce7-4089-4597-953a-f489be721fe2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="6" y="10" width="549" height="1" uuid="b50a57f2-b94f-46c9-8307-e79be15b5946"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="335" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="5" y="30" width="550" height="30" forecolor="#FFFFFF" backcolor="#FC1008" uuid="ffa78914-b857-4465-ae88-06484cfb3b42"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Numero de libros, y de alumnos]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="10" y="70" width="67" height="67" uuid="4d9b5c13-4a88-463c-a0b4-4c0e220a3d1c"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_PATH}+"proyectoSubreporte3_3.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>
