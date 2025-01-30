@@ -589,13 +589,13 @@ public class BibliotecaController {
                     }
 
                 }else{
+                    Prestamo prestamo = (Prestamo) seleccion;
                     try {
-                        Prestamo prestamo=(Prestamo) seleccion;
                         Window ventana = tablaVista.getScene().getWindow();
                         String idioma = Propiedades.getValor("language");
                         ResourceBundle bundle = ResourceBundle.getBundle("/com/benat/cano/biblioteca/languages/lan", new Locale(idioma));
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/benat/cano/biblioteca/fxml/devoluciones.fxml"), bundle);
-                        DevolucionesController controlador = new DevolucionesController(prestamo);  // Pasamos la Participación seleccionada
+                        DevolucionesController controlador = new DevolucionesController( prestamo );  // Pasamos la Participación seleccionada
                         fxmlLoader.setController(controlador);
                         Scene scene = new Scene(fxmlLoader.load());
                         Stage stage = new Stage();
@@ -612,11 +612,12 @@ public class BibliotecaController {
                         stage.initOwner(ventana);
                         stage.initModality(Modality.APPLICATION_MODAL);
                         stage.showAndWait();
-                        cargarPrestamos();
+                        cargarLibros();
                     } catch (IOException e) {
                         System.err.println(e.getMessage());
                         alerta(new ArrayList<>(Arrays.asList(resources.getString("message.window_open"))));
                     }
+
                 }
             }
         } else {
